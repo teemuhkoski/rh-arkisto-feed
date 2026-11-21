@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+     xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>Rane Raitsikka ja Tokela – Arkisto</title>
+    <link>https://www.radiohelsinki.fi/ohjelma/rane-raitsikka-tokela/</link>
+    <language>fi</language>
+    <description>Radio Helsingin Rane Raitsikka &amp; Tokela -jaksoja.</description>
+    <itunes:author>Rane Raitsikka &amp; Tokela</itunes:author>
+
+    <item>
+      <title>Jakso 04 (2017-03-22)</title>
+      <guid isPermaLink="false">rane-raitsikka-tokela-2017-03-22-30554</guid>
+      <pubDate>Wed, 22 Mar 2017 19:00:00 +0200</pubDate>
+      <description>Rane Raitsikka &amp; Tokela neljännen lähetyksen aiheita mm: Chuck Berry, Kapinaorkesteri, Remu, OK Computer/Brian McDonald, Ginger Baker, Keith Richards, läheltä piti #3, Lepakon Zulut ja whiskyn pakkojuottaminen.</description>
+      <enclosure url="https://radiohelsinki-podcast.s3.amazonaws.com/rh2017ondemand/20170322_ranetokela_OD.mp3"
+                 length="344333558"
+                 type="audio/mpeg" />
+      <itunes:duration>02:59:24</itunes:duration>
+      <podcast:chapters url="https://teemuhkoski.github.io/rh-arkisto-feed/chapters.json"
+                        type="application/json+chapters" />
+    </item>
+  </channel>
+</rss>
