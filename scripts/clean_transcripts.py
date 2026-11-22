@@ -195,7 +195,8 @@ def clean_episode(ep_num: int) -> Path | None:
                 marker_start = max(m_start, start) if m_start == 0 else m_start
                 marker_end = min(m_end, marker_start + 8.0)
                 label = re.sub(r"^Intro ja\s+", "", m_title, flags=re.I)
-                out_cues.append((marker_start, marker_end, f"♪ {label} ♪"))
+                suffix = "" if label.endswith((".", "!", "?")) else "."
+                out_cues.append((marker_start, marker_end, f"♪ {label}{suffix}"))
             continue
 
         if is_hallucination(text):
@@ -216,7 +217,8 @@ def clean_episode(ep_num: int) -> Path | None:
             marker_start = m_start + 6.0 if m_start == 0 else m_start
             marker_end = min(m_end, marker_start + 8.0)
             label = re.sub(r"^Intro ja\s+", "", m_title, flags=re.I)
-            out_cues.append((marker_start, marker_end, f"♪ {label} ♪"))
+            suffix = "" if label.endswith((".", "!", "?")) else "."
+            out_cues.append((marker_start, marker_end, f"♪ {label}{suffix}"))
 
     out_cues.sort(key=lambda x: x[0])
 

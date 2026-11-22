@@ -737,22 +737,14 @@ def main() -> None:
 
         prev_t = -1
         ts_lines: list[str] = []
-        html_ts_lines: list[str] = []
         for ch in chapters:
             t = int(round(ch["startTime"]))
             if t < prev_t:
                 raise ValueError(f"Epäjärjestyksessä oleva aikaleima tiedostossa {chapters_path.name}: {t} < {prev_t}")
             prev_t = t
-            hms = format_hms(t)
-            ts_lines.append(f"{hms} - {ch['title']}")
-            html_ts_lines.append(f"{hms} - {html_lib.escape(ch['title'], quote=False)}")
+            ts_lines.append(f"{format_hms(t)} {ch['title']}")
 
         full_description = f"{intro_desc}\n\n" + "\n".join(ts_lines) if intro_desc else "\n".join(ts_lines)
-        html_parts: list[str] = []
-        if intro_desc:
-            html_parts.append(f"<p>{html_lib.escape(intro_desc, quote=False)}</p>")
-        html_parts.append("<p>" + "<br />\n".join(html_ts_lines) + "</p>")
-        content_encoded = "\n".join(html_parts)
 
         guid = LEGACY_GUIDS.get(global_ep, f"rane-raitsikka-tokela-{iso_date}-ep{global_ep:02d}")
         item_title = f"Kausi {season}, Jakso {ep_in_season:02d} ({iso_date})"
@@ -786,7 +778,6 @@ def main() -> None:
             f"      <itunes:explicit>true</itunes:explicit>\n"
             f"{image_tag}"
             f"      <description><![CDATA[{cdata_safe(full_description)}]]></description>\n"
-            f"      <content:encoded><![CDATA[{cdata_safe(content_encoded)}]]></content:encoded>\n"
             f'      <enclosure url="{escape(ep["url"])}"\n'
             f'                 length="{audio_length}"\n'
             f'                 type="audio/mpeg" />\n'
@@ -837,7 +828,6 @@ def main() -> None:
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<rss version="2.0"\n'
         '     xmlns:atom="http://www.w3.org/2005/Atom"\n'
-        '     xmlns:content="http://purl.org/rss/1.0/modules/content/"\n'
         '     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"\n'
         '     xmlns:podcast="https://podcastindex.org/namespace/1.0">\n'
         "  <channel>\n"
