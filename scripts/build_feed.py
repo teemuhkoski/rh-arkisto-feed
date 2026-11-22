@@ -270,7 +270,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         <p class="ep-desc">{html_lib.escape(ep['intro_desc'])}</p>
         <div class="ep-links">{' '.join(links)}</div>
         <details class="ep-chapters">
-          <summary>Näytä sisällysluettelo ja soitetut kappaleet ({len(ep['chapters'])} kpl)</summary>
+          <summary>Näytä sisällysluettelo ja soitetut biisit ({len(ep['chapters'])} kpl)</summary>
           <ul class="ch-list">
             {''.join(ch_rows)}
           </ul>
@@ -563,8 +563,8 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         <div class="stats">
           <span class="stat"><strong>{len(published)} / {total_episodes}</strong> jaksoa julkaistu</span>
           <span class="stat"><strong>{total_hours:.1f} h</strong> kuunneltavaa</span>
-          <span class="stat"><strong>{total_chapters}</strong> osiota</span>
-          <span class="stat"><strong>{total_songs}</strong> kappaletta</span>
+          <span class="stat"><strong>{total_chapters}</strong> chapteria</span>
+          <span class="stat"><strong>{total_songs}</strong> biisiä</span>
         </div>
         <div class="actions">
           <button class="btn btn-primary" id="copyBtn" type="button">Kopioi RSS-osoite</button>
