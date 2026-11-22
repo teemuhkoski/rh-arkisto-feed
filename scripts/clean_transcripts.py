@@ -233,7 +233,7 @@ def clean_episode(ep_num: int) -> Path | None:
     TRANSCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
     out_path = TRANSCRIPTS_DIR / f"transcript_{ep_num:02d}.vtt"
 
-    lines = ["WEBVTT", f"Kind: captions", f"Language: fi", ""]
+    lines = ["WEBVTT", ""]
     for start, end, text in normalized:
         lines.append(f"{format_vtt_time(start)} --> {format_vtt_time(end)}")
         lines.append(text)

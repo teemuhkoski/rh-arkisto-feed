@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
      xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
      xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
      xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
@@ -8,7 +9,7 @@
     <link>https://www.radiohelsinki.fi/ohjelma/rane-raitsikka-tokela/</link>
     <atom:link href="https://teemuhkoski.github.io/rh-arkisto-feed/feed.xml" rel="self" type="application/rss+xml" />
     <language>fi</language>
-    <description>Radio Helsingin Rane Raitsikka &amp; Tokela -ohjelman jaksoarkisto (2017–2018) luvuilla ja aikaleimoilla.</description>
+    <description>Radio Helsingin Rane Raitsikka &amp; Tokela -ohjelman jaksoarkisto (2017–2018) sisällysluettelolla ja aikaleimoilla.</description>
     <itunes:author>Rane Raitsikka &amp; Tokela</itunes:author>
     <itunes:type>episodic</itunes:type>
     <itunes:explicit>true</itunes:explicit>
@@ -33,52 +34,99 @@
       <itunes:image href="https://teemuhkoski.github.io/rh-arkisto-feed/cover.jpg" />
       <description><![CDATA[Rane Raitsikka & Tokela neljännen lähetyksen aiheita mm: Chuck Berry, Kapinaorkesteri, Remu, OK Computer/Brian McDonald, Ginger Baker, Keith Richards, läheltä piti #3, Lepakon Zulut ja whiskyn pakkojuottaminen.
 
-00:00:00 Intro ja Musiikki: Peter Tosh – Coming in Hot
-00:04:17 Avaus, Tiketti-skaba (Laineen Kasperi & Tre-Funk III), Kapinaorkesterin esittely ja Rod Stewart
-00:08:06 Musiikki: Rod Stewart – Let Me Be Your Car
-00:12:38 Chuck Berryn muistelu, Johnnie Johnson ja kohtaaminen House of Bluesissa
-00:17:32 Musiikki: Chuck Berry – Down Bound Train
-00:20:25 Mainoskatko
-00:21:41 Musiikki: The Raconteurs – Steady, As She Goes
-00:25:17 Kapinaorkesteri ja Kapinavirsi: virsikirjahistoria, Remun sovitus ja hyväntekeväisyys
-00:30:08 Musiikki: Kapinaorkesteri – Kapinavirsi
-00:33:31 Joe Walsh, Remu, Arska, Iski ja Lido Salosen toimisto
-00:38:45 Musiikki: The Ruts – Babylon's Burning
-00:41:07 Mainoskatko
-00:42:41 Musiikki: Radiohead – Karma Police
-00:46:38 The Ruts, Brian McDonald, Thom Yorke, OK Computer ja 500 superliimattua Walkmania
-00:56:29 Musiikki: Bad Brains – Sailin' On
-00:58:18 Brian McDonaldin siirto Interscopelle, verenvaihdot Tijuanassa ja Death Row Records
-01:00:41 Mainoskatko
-01:02:04 Musiikki: The Modern Lovers – Roadrunner
-01:05:43 Tiketti-kilpailu: Laineen Kasperi ja edellisen viikon vastaus (Anti-Nowhere League)
-01:09:27 Musiikki: Freddie Henchi & The Soul Setters – Funky to the Bone
-01:13:17 Musiikki: The Jimi Hendrix Experience – Sunshine of Your Love
-01:19:27 Mainoskatko
-01:22:17 Cream, Ginger Baker, Jack Bruce, Gary Moore ja Midfyn-festivaalin lääkärikoppi
-01:33:25 Musiikki: Fela Kuti
-01:36:48 Musiikki: Fleetwood Mac – Rattlesnake Shake
-01:40:58 Mainoskatko
-01:42:40 Musiikki: Keith Richards – You Shouldn't Take It So Hard
-01:45:48 Keith Richardsin puhelu Ranelle, Ivan Neville ja Bruce Willisin lentokonehalli
-01:54:15 Musiikki: Ronnie Wood – Can't Stand the Rain
-01:57:16 Ronnie Wood, basisti Sean Salmonin traaginen kohtalo ja toisen tunnin päätös
-02:01:05 Mainoskatko
-02:02:21 Kolmannen tunnin avaus ja Läheltä piti -teeman pohjustus
-02:03:11 Musiikki: Beastie Boys – Sabotage
-02:05:36 Beastie Boys ja Läheltä piti #3: Hollywoodin kauppareissu, crack-muodonmuutos ja McDonald'sin autoryöstö
-02:15:25 Musiikki: Brant Bjork – Automatic Fantastic
-02:22:00 Mainoskatko
-02:23:12 Musiikki: Whiskeytown
-02:26:00 Brant Bjorkin grilli-ilta (Lemmy & Nick Oliveri), Whiskeytown ja Brad Rice Ronnie Woodin tukihenkilönä
-02:31:51 Lepakon Zulut Saksassa, Ranen rumpusoolo ja 5 litran Johnnie Walker -viskipullon pakkojuotto
-02:41:28 Musiikki: Doris Troy – Just One Look
-02:43:58 Mainoskatko
-02:44:59 Musiikki: The Detroit Cobras – Shout Bamalama
-02:46:52 The Detroit Cobras Hobokenissa ja Mink DeVillen esittely
-02:49:18 Musiikki: Mink DeVille – Venus of Avenue D
-02:53:56 Loppuyhteenveto ja kiitokset
-02:55:10 Musiikki: Buffalo Springfield – Kind Woman]]></description>
+00:00:00 - Intro ja Musiikki: Peter Tosh – Coming in Hot
+00:04:17 - Avaus, Tiketti-skaba (Laineen Kasperi & Tre-Funk III), Kapinaorkesterin esittely ja Rod Stewart
+00:08:06 - Musiikki: Rod Stewart – Let Me Be Your Car
+00:12:38 - Chuck Berryn muistelu, Johnnie Johnson ja kohtaaminen House of Bluesissa
+00:17:32 - Musiikki: Chuck Berry – Down Bound Train
+00:20:25 - Mainoskatko
+00:21:41 - Musiikki: The Raconteurs – Steady, As She Goes
+00:25:17 - Kapinaorkesteri ja Kapinavirsi: virsikirjahistoria, Remun sovitus ja hyväntekeväisyys
+00:30:08 - Musiikki: Kapinaorkesteri – Kapinavirsi
+00:33:31 - Joe Walsh, Remu, Arska, Iski ja Lido Salosen toimisto
+00:38:45 - Musiikki: The Ruts – Babylon's Burning
+00:41:07 - Mainoskatko
+00:42:41 - Musiikki: Radiohead – Karma Police
+00:46:38 - The Ruts, Brian McDonald, Thom Yorke, OK Computer ja 500 superliimattua Walkmania
+00:56:29 - Musiikki: Bad Brains – Sailin' On
+00:58:18 - Brian McDonaldin siirto Interscopelle, verenvaihdot Tijuanassa ja Death Row Records
+01:00:41 - Mainoskatko
+01:02:04 - Musiikki: The Modern Lovers – Roadrunner
+01:05:43 - Tiketti-kilpailu: Laineen Kasperi ja edellisen viikon vastaus (Anti-Nowhere League)
+01:09:27 - Musiikki: Freddie Henchi & The Soul Setters – Funky to the Bone
+01:13:17 - Musiikki: The Jimi Hendrix Experience – Sunshine of Your Love
+01:19:27 - Mainoskatko
+01:22:17 - Cream, Ginger Baker, Jack Bruce, Gary Moore ja Midfyn-festivaalin lääkärikoppi
+01:33:25 - Musiikki: Fela Kuti
+01:36:48 - Musiikki: Fleetwood Mac – Rattlesnake Shake
+01:40:58 - Mainoskatko
+01:42:40 - Musiikki: Keith Richards – You Shouldn't Take It So Hard
+01:45:48 - Keith Richardsin puhelu Ranelle, Ivan Neville ja Bruce Willisin lentokonehalli
+01:54:15 - Musiikki: Ronnie Wood – Can't Stand the Rain
+01:57:16 - Ronnie Wood, basisti Sean Salmonin traaginen kohtalo ja toisen tunnin päätös
+02:01:05 - Mainoskatko
+02:02:21 - Kolmannen tunnin avaus ja Läheltä piti -teeman pohjustus
+02:03:11 - Musiikki: Beastie Boys – Sabotage
+02:05:36 - Beastie Boys ja Läheltä piti #3: Hollywoodin kauppareissu, crack-muodonmuutos ja McDonald'sin autoryöstö
+02:15:25 - Musiikki: Brant Bjork – Automatic Fantastic
+02:22:00 - Mainoskatko
+02:23:12 - Musiikki: Whiskeytown
+02:26:00 - Brant Bjorkin grilli-ilta (Lemmy & Nick Oliveri), Whiskeytown ja Brad Rice Ronnie Woodin tukihenkilönä
+02:31:51 - Lepakon Zulut Saksassa, Ranen rumpusoolo ja 5 litran Johnnie Walker -viskipullon pakkojuotto
+02:41:28 - Musiikki: Doris Troy – Just One Look
+02:43:58 - Mainoskatko
+02:44:59 - Musiikki: The Detroit Cobras – Shout Bamalama
+02:46:52 - The Detroit Cobras Hobokenissa ja Mink DeVillen esittely
+02:49:18 - Musiikki: Mink DeVille – Venus of Avenue D
+02:53:56 - Loppuyhteenveto ja kiitokset
+02:55:10 - Musiikki: Buffalo Springfield – Kind Woman]]></description>
+      <content:encoded><![CDATA[<p>Rane Raitsikka &amp; Tokela neljännen lähetyksen aiheita mm: Chuck Berry, Kapinaorkesteri, Remu, OK Computer/Brian McDonald, Ginger Baker, Keith Richards, läheltä piti #3, Lepakon Zulut ja whiskyn pakkojuottaminen.</p>
+<p>00:00:00 - Intro ja Musiikki: Peter Tosh – Coming in Hot<br />
+00:04:17 - Avaus, Tiketti-skaba (Laineen Kasperi &amp; Tre-Funk III), Kapinaorkesterin esittely ja Rod Stewart<br />
+00:08:06 - Musiikki: Rod Stewart – Let Me Be Your Car<br />
+00:12:38 - Chuck Berryn muistelu, Johnnie Johnson ja kohtaaminen House of Bluesissa<br />
+00:17:32 - Musiikki: Chuck Berry – Down Bound Train<br />
+00:20:25 - Mainoskatko<br />
+00:21:41 - Musiikki: The Raconteurs – Steady, As She Goes<br />
+00:25:17 - Kapinaorkesteri ja Kapinavirsi: virsikirjahistoria, Remun sovitus ja hyväntekeväisyys<br />
+00:30:08 - Musiikki: Kapinaorkesteri – Kapinavirsi<br />
+00:33:31 - Joe Walsh, Remu, Arska, Iski ja Lido Salosen toimisto<br />
+00:38:45 - Musiikki: The Ruts – Babylon's Burning<br />
+00:41:07 - Mainoskatko<br />
+00:42:41 - Musiikki: Radiohead – Karma Police<br />
+00:46:38 - The Ruts, Brian McDonald, Thom Yorke, OK Computer ja 500 superliimattua Walkmania<br />
+00:56:29 - Musiikki: Bad Brains – Sailin' On<br />
+00:58:18 - Brian McDonaldin siirto Interscopelle, verenvaihdot Tijuanassa ja Death Row Records<br />
+01:00:41 - Mainoskatko<br />
+01:02:04 - Musiikki: The Modern Lovers – Roadrunner<br />
+01:05:43 - Tiketti-kilpailu: Laineen Kasperi ja edellisen viikon vastaus (Anti-Nowhere League)<br />
+01:09:27 - Musiikki: Freddie Henchi &amp; The Soul Setters – Funky to the Bone<br />
+01:13:17 - Musiikki: The Jimi Hendrix Experience – Sunshine of Your Love<br />
+01:19:27 - Mainoskatko<br />
+01:22:17 - Cream, Ginger Baker, Jack Bruce, Gary Moore ja Midfyn-festivaalin lääkärikoppi<br />
+01:33:25 - Musiikki: Fela Kuti<br />
+01:36:48 - Musiikki: Fleetwood Mac – Rattlesnake Shake<br />
+01:40:58 - Mainoskatko<br />
+01:42:40 - Musiikki: Keith Richards – You Shouldn't Take It So Hard<br />
+01:45:48 - Keith Richardsin puhelu Ranelle, Ivan Neville ja Bruce Willisin lentokonehalli<br />
+01:54:15 - Musiikki: Ronnie Wood – Can't Stand the Rain<br />
+01:57:16 - Ronnie Wood, basisti Sean Salmonin traaginen kohtalo ja toisen tunnin päätös<br />
+02:01:05 - Mainoskatko<br />
+02:02:21 - Kolmannen tunnin avaus ja Läheltä piti -teeman pohjustus<br />
+02:03:11 - Musiikki: Beastie Boys – Sabotage<br />
+02:05:36 - Beastie Boys ja Läheltä piti #3: Hollywoodin kauppareissu, crack-muodonmuutos ja McDonald'sin autoryöstö<br />
+02:15:25 - Musiikki: Brant Bjork – Automatic Fantastic<br />
+02:22:00 - Mainoskatko<br />
+02:23:12 - Musiikki: Whiskeytown<br />
+02:26:00 - Brant Bjorkin grilli-ilta (Lemmy &amp; Nick Oliveri), Whiskeytown ja Brad Rice Ronnie Woodin tukihenkilönä<br />
+02:31:51 - Lepakon Zulut Saksassa, Ranen rumpusoolo ja 5 litran Johnnie Walker -viskipullon pakkojuotto<br />
+02:41:28 - Musiikki: Doris Troy – Just One Look<br />
+02:43:58 - Mainoskatko<br />
+02:44:59 - Musiikki: The Detroit Cobras – Shout Bamalama<br />
+02:46:52 - The Detroit Cobras Hobokenissa ja Mink DeVillen esittely<br />
+02:49:18 - Musiikki: Mink DeVille – Venus of Avenue D<br />
+02:53:56 - Loppuyhteenveto ja kiitokset<br />
+02:55:10 - Musiikki: Buffalo Springfield – Kind Woman</p>]]></content:encoded>
       <enclosure url="https://radiohelsinki-podcast.s3.amazonaws.com/rh2017ondemand/20170322_ranetokela_OD.mp3"
                  length="344125210"
                  type="audio/mpeg" />
@@ -99,59 +147,113 @@
       <itunes:image href="https://teemuhkoski.github.io/rh-arkisto-feed/cover.jpg" />
       <description><![CDATA[Ranen ja Tokelan tokassa ohjelmassa puhuttiin mm. seuraavista aiheista: Robert Gordon, Salt 'n' Pepa, D.H. Peligro, Suicidal Tendencies, läheltä piti #1, Aaron Neville & Larry Williams timanttivarkaissa, Wilko Johnson, älä ole Raija (Forström) ja Snoop Dogg.
 
-00:00:00 Intro ja Musiikki: Ramones – Do You Remember Rock 'n' Roll Radio?
-00:03:53 Musiikki: Koko Taylor – Wang Dang Doodle
-00:06:28 Naistenpäivän avaus, yhteistyökumppanit ja Rock Against Racism
-00:09:32 Musiikki: Robert Gordon – The Woman
-00:11:58 Tokelan kohtaamiset Robert Gordonin kanssa: takahuoneesta Pyhätunturille
-00:15:47 Musiikki: En Vogue – Free Your Mind
-00:20:17 Mainoskatko
-00:21:43 Musiikki: Salt-N-Pepa (feat. En Vogue) – Whatta Man
-00:25:38 Tokela, Leningrad Cowboys ja Salt-N-Pepa MTV Video Music Awardsissa 1994
-00:29:43 Musiikki: Dead Kennedys – Holiday in Cambodia
-00:33:30 Dead Kennedys Tavastialla 1982, D.H. Peligro ja Ranen vieroitushoito
-00:40:04 Musiikki: Sublime – What I Got
-00:42:32 Mainoskatko
-00:44:02 Sublimen Bradley Nowellin lesken lahjoitus muusikoiden avustusohjelmalle
-00:45:25 Musiikki: Stretch – Why Did You Do It?
-00:48:44 Musiikki: Parliament – Mothership Connection / Funkentelechy
-00:54:08 Lock, Stock and Two Smoking Barrels, George Clinton ja ulkomaan kuuntelijat
-00:57:44 Musiikki: James Brown – The Boss
-01:00:43 Mainoskatko
-01:03:20 Musiikki: Chuck Berry – Jaguar and Thunderbird
-01:05:39 Tiketti-kilpailu: 40. FHRA American Car Show
-01:08:00 Musiikki: Suicidal Tendencies – Psycho Vision
-01:11:56 Suicidal Tendenciesin keikat, Venice 13 -katujengi ja välikohtaus Hollywood Boulevardilla
-01:19:02 Musiikki: Discharge – Decontrol
-01:21:13 Mainoskatko
-01:23:49 Musiikki: Wasted – No Reason for Existence
-01:26:30 Brittipunkin muutos, Discharge Lepakossa ja Wasted
-01:29:09 Eksyminen South Centraliin: huoltoaseman kuumottava tilanne ja Madin .357 Magnum
-01:36:56 Musiikki: Aerosmith – Dude (Looks Like a Lady)
-01:40:48 Mainoskatko
-01:42:18 Musiikki: Irma Thomas – Time Is on My Side
-01:45:06 Bändien nimet, Ivan ja Aaron Neville, puhelinkortit sekä Larry Williamsin timanttiryöstö
-01:51:50 Musiikki: Aaron Neville – Tell It Like It Is
-01:54:43 Musiikki: Larry Williams – Slow Down
-01:57:35 Neville-klaanin ja Larry Williamsin fiilistelyä
-01:58:39 Mainoskatko
-01:59:29 Musiikki: Wilko Johnson & Roger Daltrey – Going Back Home
-02:01:58 Mick Green, Wilko Johnsonin soittotyyli, salakeikka Dubrovnikissa ja Marshall-vahvistimen huijaus
-02:13:56 Musiikki: Ian Dury and the Blockheads – Sweet Gene Vincent
-02:17:19 Musiikki: Desmond Dekker – 007 (Shanty Town)
-02:19:51 Mainoskatko
-02:21:13 Musiikki: Sex Pistols – Did You No Wrong
-02:24:30 Sex Pistolsin työlupakohu 1978, Raija Forsströmin ”elektroninen säksättävä laite” ja nykymusiikin arvostelu
-02:33:06 Musiikki: Laika & The Cosmonauts – Surfs You Right
-02:36:28 Musiikki: Snoop Dogg – Murder Was the Case
-02:39:58 Mainoskatko
-02:41:05 Terveiset nuorille tekijöille, Laika & The Cosmonauts ja Snoop Doggin saapuminen MTV-gaalaan
-02:45:53 Musiikki: Slim Harpo – Baby Scratch My Back
-02:48:14 Louisiana Larryn hurja lapsuus, vankilavuodet ja Slim Harpo lapsenvahtina
-02:51:34 Musiikki: The White Stripes – Seven Nation Army
-02:53:46 Musiikki: Beat From Palookaville
-02:55:46 Loppusanat ja kiitokset
-02:56:29 Musiikki: Faces – Glad and Sorry]]></description>
+00:00:00 - Intro ja Musiikki: Ramones – Do You Remember Rock 'n' Roll Radio?
+00:03:53 - Musiikki: Koko Taylor – Wang Dang Doodle
+00:06:28 - Naistenpäivän avaus, yhteistyökumppanit ja Rock Against Racism
+00:09:32 - Musiikki: Robert Gordon – The Woman
+00:11:58 - Tokelan kohtaamiset Robert Gordonin kanssa: takahuoneesta Pyhätunturille
+00:15:47 - Musiikki: En Vogue – Free Your Mind
+00:20:17 - Mainoskatko
+00:21:43 - Musiikki: Salt-N-Pepa (feat. En Vogue) – Whatta Man
+00:25:38 - Tokela, Leningrad Cowboys ja Salt-N-Pepa MTV Video Music Awardsissa 1994
+00:29:43 - Musiikki: Dead Kennedys – Holiday in Cambodia
+00:33:30 - Dead Kennedys Tavastialla 1982, D.H. Peligro ja Ranen vieroitushoito
+00:40:04 - Musiikki: Sublime – What I Got
+00:42:32 - Mainoskatko
+00:44:02 - Sublimen Bradley Nowellin lesken lahjoitus muusikoiden avustusohjelmalle
+00:45:25 - Musiikki: Stretch – Why Did You Do It?
+00:48:44 - Musiikki: Parliament – Mothership Connection / Funkentelechy
+00:54:08 - Lock, Stock and Two Smoking Barrels, George Clinton ja ulkomaan kuuntelijat
+00:57:44 - Musiikki: James Brown – The Boss
+01:00:43 - Mainoskatko
+01:03:20 - Musiikki: Chuck Berry – Jaguar and Thunderbird
+01:05:39 - Tiketti-kilpailu: 40. FHRA American Car Show
+01:08:00 - Musiikki: Suicidal Tendencies – Psycho Vision
+01:11:56 - Suicidal Tendenciesin keikat, Venice 13 -katujengi ja välikohtaus Hollywood Boulevardilla
+01:19:02 - Musiikki: Discharge – Decontrol
+01:21:13 - Mainoskatko
+01:23:49 - Musiikki: Wasted – No Reason for Existence
+01:26:30 - Brittipunkin muutos, Discharge Lepakossa ja Wasted
+01:29:09 - Eksyminen South Centraliin: huoltoaseman kuumottava tilanne ja Madin .357 Magnum
+01:36:56 - Musiikki: Aerosmith – Dude (Looks Like a Lady)
+01:40:48 - Mainoskatko
+01:42:18 - Musiikki: Irma Thomas – Time Is on My Side
+01:45:06 - Bändien nimet, Ivan ja Aaron Neville, puhelinkortit sekä Larry Williamsin timanttiryöstö
+01:51:50 - Musiikki: Aaron Neville – Tell It Like It Is
+01:54:43 - Musiikki: Larry Williams – Slow Down
+01:57:35 - Neville-klaanin ja Larry Williamsin fiilistelyä
+01:58:39 - Mainoskatko
+01:59:29 - Musiikki: Wilko Johnson & Roger Daltrey – Going Back Home
+02:01:58 - Mick Green, Wilko Johnsonin soittotyyli, salakeikka Dubrovnikissa ja Marshall-vahvistimen huijaus
+02:13:56 - Musiikki: Ian Dury and the Blockheads – Sweet Gene Vincent
+02:17:19 - Musiikki: Desmond Dekker – 007 (Shanty Town)
+02:19:51 - Mainoskatko
+02:21:13 - Musiikki: Sex Pistols – Did You No Wrong
+02:24:30 - Sex Pistolsin työlupakohu 1978, Raija Forsströmin ”elektroninen säksättävä laite” ja nykymusiikin arvostelu
+02:33:06 - Musiikki: Laika & The Cosmonauts – Surfs You Right
+02:36:28 - Musiikki: Snoop Dogg – Murder Was the Case
+02:39:58 - Mainoskatko
+02:41:05 - Terveiset nuorille tekijöille, Laika & The Cosmonauts ja Snoop Doggin saapuminen MTV-gaalaan
+02:45:53 - Musiikki: Slim Harpo – Baby Scratch My Back
+02:48:14 - Louisiana Larryn hurja lapsuus, vankilavuodet ja Slim Harpo lapsenvahtina
+02:51:34 - Musiikki: The White Stripes – Seven Nation Army
+02:53:46 - Musiikki: Beat From Palookaville
+02:55:46 - Loppusanat ja kiitokset
+02:56:29 - Musiikki: Faces – Glad and Sorry]]></description>
+      <content:encoded><![CDATA[<p>Ranen ja Tokelan tokassa ohjelmassa puhuttiin mm. seuraavista aiheista: Robert Gordon, Salt 'n' Pepa, D.H. Peligro, Suicidal Tendencies, läheltä piti #1, Aaron Neville &amp; Larry Williams timanttivarkaissa, Wilko Johnson, älä ole Raija (Forström) ja Snoop Dogg.</p>
+<p>00:00:00 - Intro ja Musiikki: Ramones – Do You Remember Rock 'n' Roll Radio?<br />
+00:03:53 - Musiikki: Koko Taylor – Wang Dang Doodle<br />
+00:06:28 - Naistenpäivän avaus, yhteistyökumppanit ja Rock Against Racism<br />
+00:09:32 - Musiikki: Robert Gordon – The Woman<br />
+00:11:58 - Tokelan kohtaamiset Robert Gordonin kanssa: takahuoneesta Pyhätunturille<br />
+00:15:47 - Musiikki: En Vogue – Free Your Mind<br />
+00:20:17 - Mainoskatko<br />
+00:21:43 - Musiikki: Salt-N-Pepa (feat. En Vogue) – Whatta Man<br />
+00:25:38 - Tokela, Leningrad Cowboys ja Salt-N-Pepa MTV Video Music Awardsissa 1994<br />
+00:29:43 - Musiikki: Dead Kennedys – Holiday in Cambodia<br />
+00:33:30 - Dead Kennedys Tavastialla 1982, D.H. Peligro ja Ranen vieroitushoito<br />
+00:40:04 - Musiikki: Sublime – What I Got<br />
+00:42:32 - Mainoskatko<br />
+00:44:02 - Sublimen Bradley Nowellin lesken lahjoitus muusikoiden avustusohjelmalle<br />
+00:45:25 - Musiikki: Stretch – Why Did You Do It?<br />
+00:48:44 - Musiikki: Parliament – Mothership Connection / Funkentelechy<br />
+00:54:08 - Lock, Stock and Two Smoking Barrels, George Clinton ja ulkomaan kuuntelijat<br />
+00:57:44 - Musiikki: James Brown – The Boss<br />
+01:00:43 - Mainoskatko<br />
+01:03:20 - Musiikki: Chuck Berry – Jaguar and Thunderbird<br />
+01:05:39 - Tiketti-kilpailu: 40. FHRA American Car Show<br />
+01:08:00 - Musiikki: Suicidal Tendencies – Psycho Vision<br />
+01:11:56 - Suicidal Tendenciesin keikat, Venice 13 -katujengi ja välikohtaus Hollywood Boulevardilla<br />
+01:19:02 - Musiikki: Discharge – Decontrol<br />
+01:21:13 - Mainoskatko<br />
+01:23:49 - Musiikki: Wasted – No Reason for Existence<br />
+01:26:30 - Brittipunkin muutos, Discharge Lepakossa ja Wasted<br />
+01:29:09 - Eksyminen South Centraliin: huoltoaseman kuumottava tilanne ja Madin .357 Magnum<br />
+01:36:56 - Musiikki: Aerosmith – Dude (Looks Like a Lady)<br />
+01:40:48 - Mainoskatko<br />
+01:42:18 - Musiikki: Irma Thomas – Time Is on My Side<br />
+01:45:06 - Bändien nimet, Ivan ja Aaron Neville, puhelinkortit sekä Larry Williamsin timanttiryöstö<br />
+01:51:50 - Musiikki: Aaron Neville – Tell It Like It Is<br />
+01:54:43 - Musiikki: Larry Williams – Slow Down<br />
+01:57:35 - Neville-klaanin ja Larry Williamsin fiilistelyä<br />
+01:58:39 - Mainoskatko<br />
+01:59:29 - Musiikki: Wilko Johnson &amp; Roger Daltrey – Going Back Home<br />
+02:01:58 - Mick Green, Wilko Johnsonin soittotyyli, salakeikka Dubrovnikissa ja Marshall-vahvistimen huijaus<br />
+02:13:56 - Musiikki: Ian Dury and the Blockheads – Sweet Gene Vincent<br />
+02:17:19 - Musiikki: Desmond Dekker – 007 (Shanty Town)<br />
+02:19:51 - Mainoskatko<br />
+02:21:13 - Musiikki: Sex Pistols – Did You No Wrong<br />
+02:24:30 - Sex Pistolsin työlupakohu 1978, Raija Forsströmin ”elektroninen säksättävä laite” ja nykymusiikin arvostelu<br />
+02:33:06 - Musiikki: Laika &amp; The Cosmonauts – Surfs You Right<br />
+02:36:28 - Musiikki: Snoop Dogg – Murder Was the Case<br />
+02:39:58 - Mainoskatko<br />
+02:41:05 - Terveiset nuorille tekijöille, Laika &amp; The Cosmonauts ja Snoop Doggin saapuminen MTV-gaalaan<br />
+02:45:53 - Musiikki: Slim Harpo – Baby Scratch My Back<br />
+02:48:14 - Louisiana Larryn hurja lapsuus, vankilavuodet ja Slim Harpo lapsenvahtina<br />
+02:51:34 - Musiikki: The White Stripes – Seven Nation Army<br />
+02:53:46 - Musiikki: Beat From Palookaville<br />
+02:55:46 - Loppusanat ja kiitokset<br />
+02:56:29 - Musiikki: Faces – Glad and Sorry</p>]]></content:encoded>
       <enclosure url="https://radiohelsinki-podcast.s3.amazonaws.com/rh2017ondemand/20170308_ranetokela_OD.mp3"
                  length="430831656"
                  type="audio/mpeg" />
@@ -172,59 +274,113 @@
       <itunes:image href="https://teemuhkoski.github.io/rh-arkisto-feed/cover.jpg" />
       <description><![CDATA[Rane & Tokela ekan jakson aiheita mm: Gene Troutman, Lepakkoluola, H.R. Bad Brains, L7, lapsuuden laulut, Rampart scandal, Sly Stone, Philthy Phil Animal Taylor ja Talonmies Bob.
 
-00:00:00 Intro ja Musiikki: Queens of the Stone Age – The Lost Art of Keeping a Secret
-00:03:47 Avaus, uusi Radio Helsingin studio, Custom Sounds ja Gene Trautmann (Miracle Workers / QOTSA)
-00:08:33 Musiikki: Bill Withers – Use Me
-00:12:14 Musiikki: Ol' Dirty Bastard (feat. Kelis) – Got Your Money
-00:16:11 Bill Withers, Ol' Dirty Bastard ja laskujen maksu
-00:17:21 Mainoskatko
-00:19:10 Musiikki: Unicef – Käkimassaa
-00:20:37 Unicef, Pave Maijanen ja Remu, Sanni-kohu sekä Lepakkoluolan historia
-00:32:31 Musiikki: Lama – Ajatuksen loppu
-00:34:27 Musiikki: Porkkalankadun paineenkorotusasema
-00:37:13 Porkkalankadun paineenkorotusasema, General Njassa, Billy Carson ja Lepakon muutos
-00:39:08 Mainoskatko
-00:40:26 Musiikki: Bad Brains
-00:41:30 Bad Brainsin H.R., The Longnecks -soulbändi ja kamakopin muistot
-00:44:00 Musiikki: Misfits – Where Eagles Dare
-00:46:08 Punk-segmentti, H.R.:n Madonna-diili ja Refusedin esittely
-00:48:15 Musiikki: Refused
-00:51:57 Musiikki: L7 – Shitlist
-00:54:39 L7, Donita Sparks, Jennifer Finch ja Natural Born Killers
-00:57:17 Mainoskatko
-00:59:44 Musiikki: Stone Temple Pilots – All in the Suit That You Wear
-01:03:19 Scott Weiland, Ranen vieroitushoito Las Encinasissa 1997 ja Dr. Drew Pinsky
-01:08:05 Musiikki: Pink Floyd – Lucifer Sam
-01:11:10 Ohjelman nimiehdotukset, Leo Lahden NHL-raportit, Ville Nieminen ja Melrosen L.A.-levysessio
-01:15:03 Musiikki: The Mamas & the Papas – California Dreamin'
-01:17:24 Mainoskatko
-01:19:24 Tokelan lapsuusmuisto Koivukylästä 1976: Erkki Hampunpunoja, leipäveitsi ja ralliajelu soramontulla
-01:28:26 Musiikki: Jimi Hendrix – All Along the Watchtower
-01:32:26 Ranen lapsuuden nukkumaanmenobiisi tyynyn alta
-01:34:00 Musiikki: Buddy Holly – Everyday
-01:36:22 Buddy Holly, Keisari Aarnio -kirja ja L.A.:n Rampart-poliisiskandaalin alustus
-01:38:23 Mainoskatko
-01:39:47 Musiikki: N.W.A – Fuck tha Police
-01:45:37 L.A.:n Rampart-skandaali, CRASH-yksikkö, Rafael Perez, Temple Street Gang ja oselottikissat
-01:51:34 Musiikki: Rage Against the Machine
-01:58:23 Mainoskatko
-02:00:21 Musiikki: Sly & the Family Stone – If You Want Me to Stay
-02:03:21 Rage Against the Machine, Sly Stonen Fresh-levy ja asuntoautovaihe
-02:06:02 Musiikki: The Verve – The Drugs Don't Work
-02:11:12 Ranen synkät L.A.-vuodet, Atomirotan biisien synty ja Philthy ”Animal” Taylorin palanut kämppä
-02:15:17 Musiikki: The Equals – Baby, Come Back
-02:17:55 Philthy ”Animal” Taylor: soul-bändin keikka, Twist Twist Erkinharju, Leningrad Cowboys ja Wayne Gretzky (99)
-02:26:21 Musiikki: The Valentines – Gun Fever
-02:29:08 Mainoskatko
-02:30:52 Philthy ”Animal” Taylor kiipeää sähkötolppaan NHL-matsin vuoksi ja kaataa jerrykannullisen Tequila Sunrisea
-02:35:50 Musiikki: The Selecter – Too Much Pressure
-02:38:53 Loppusuoran fiilistelyä ja seuraavat keskiviikot
-02:39:48 Musiikki: Liam Lynch – United States of Whatever
-02:41:26 Musiikki: Rancid – Radio
-02:44:10 Talonmies Bob Russo: taideteos Emmylou Harrisille, ruohonleikkurimatka Philadelphiaan ja nunchakut Orange Drivella
-02:51:28 Musiikki: The Rolling Stones – Street Fighting Man
-02:54:14 Eddie Kramerin kasettimankka-äänitys ja ensimmäisen lähetyksen päätös
-02:55:44 Musiikki: Steve Earle – Down the Road]]></description>
+00:00:00 - Intro ja Musiikki: Queens of the Stone Age – The Lost Art of Keeping a Secret
+00:03:47 - Avaus, uusi Radio Helsingin studio, Custom Sounds ja Gene Trautmann (Miracle Workers / QOTSA)
+00:08:33 - Musiikki: Bill Withers – Use Me
+00:12:14 - Musiikki: Ol' Dirty Bastard (feat. Kelis) – Got Your Money
+00:16:11 - Bill Withers, Ol' Dirty Bastard ja laskujen maksu
+00:17:21 - Mainoskatko
+00:19:10 - Musiikki: Unicef – Käkimassaa
+00:20:37 - Unicef, Pave Maijanen ja Remu, Sanni-kohu sekä Lepakkoluolan historia
+00:32:31 - Musiikki: Lama – Ajatuksen loppu
+00:34:27 - Musiikki: Porkkalankadun paineenkorotusasema
+00:37:13 - Porkkalankadun paineenkorotusasema, General Njassa, Billy Carson ja Lepakon muutos
+00:39:08 - Mainoskatko
+00:40:26 - Musiikki: Bad Brains
+00:41:30 - Bad Brainsin H.R., The Longnecks -soulbändi ja kamakopin muistot
+00:44:00 - Musiikki: Misfits – Where Eagles Dare
+00:46:08 - Punk-segmentti, H.R.:n Madonna-diili ja Refusedin esittely
+00:48:15 - Musiikki: Refused
+00:51:57 - Musiikki: L7 – Shitlist
+00:54:39 - L7, Donita Sparks, Jennifer Finch ja Natural Born Killers
+00:57:17 - Mainoskatko
+00:59:44 - Musiikki: Stone Temple Pilots – All in the Suit That You Wear
+01:03:19 - Scott Weiland, Ranen vieroitushoito Las Encinasissa 1997 ja Dr. Drew Pinsky
+01:08:05 - Musiikki: Pink Floyd – Lucifer Sam
+01:11:10 - Ohjelman nimiehdotukset, Leo Lahden NHL-raportit, Ville Nieminen ja Melrosen L.A.-levysessio
+01:15:03 - Musiikki: The Mamas & the Papas – California Dreamin'
+01:17:24 - Mainoskatko
+01:19:24 - Tokelan lapsuusmuisto Koivukylästä 1976: Erkki Hampunpunoja, leipäveitsi ja ralliajelu soramontulla
+01:28:26 - Musiikki: Jimi Hendrix – All Along the Watchtower
+01:32:26 - Ranen lapsuuden nukkumaanmenobiisi tyynyn alta
+01:34:00 - Musiikki: Buddy Holly – Everyday
+01:36:22 - Buddy Holly, Keisari Aarnio -kirja ja L.A.:n Rampart-poliisiskandaalin alustus
+01:38:23 - Mainoskatko
+01:39:47 - Musiikki: N.W.A – Fuck tha Police
+01:45:37 - L.A.:n Rampart-skandaali, CRASH-yksikkö, Rafael Perez, Temple Street Gang ja oselottikissat
+01:51:34 - Musiikki: Rage Against the Machine
+01:58:23 - Mainoskatko
+02:00:21 - Musiikki: Sly & the Family Stone – If You Want Me to Stay
+02:03:21 - Rage Against the Machine, Sly Stonen Fresh-levy ja asuntoautovaihe
+02:06:02 - Musiikki: The Verve – The Drugs Don't Work
+02:11:12 - Ranen synkät L.A.-vuodet, Atomirotan biisien synty ja Philthy ”Animal” Taylorin palanut kämppä
+02:15:17 - Musiikki: The Equals – Baby, Come Back
+02:17:55 - Philthy ”Animal” Taylor: soul-bändin keikka, Twist Twist Erkinharju, Leningrad Cowboys ja Wayne Gretzky (99)
+02:26:21 - Musiikki: The Valentines – Gun Fever
+02:29:08 - Mainoskatko
+02:30:52 - Philthy ”Animal” Taylor kiipeää sähkötolppaan NHL-matsin vuoksi ja kaataa jerrykannullisen Tequila Sunrisea
+02:35:50 - Musiikki: The Selecter – Too Much Pressure
+02:38:53 - Loppusuoran fiilistelyä ja seuraavat keskiviikot
+02:39:48 - Musiikki: Liam Lynch – United States of Whatever
+02:41:26 - Musiikki: Rancid – Radio
+02:44:10 - Talonmies Bob Russo: taideteos Emmylou Harrisille, ruohonleikkurimatka Philadelphiaan ja nunchakut Orange Drivella
+02:51:28 - Musiikki: The Rolling Stones – Street Fighting Man
+02:54:14 - Eddie Kramerin kasettimankka-äänitys ja ensimmäisen lähetyksen päätös
+02:55:44 - Musiikki: Steve Earle – Down the Road]]></description>
+      <content:encoded><![CDATA[<p>Rane &amp; Tokela ekan jakson aiheita mm: Gene Troutman, Lepakkoluola, H.R. Bad Brains, L7, lapsuuden laulut, Rampart scandal, Sly Stone, Philthy Phil Animal Taylor ja Talonmies Bob.</p>
+<p>00:00:00 - Intro ja Musiikki: Queens of the Stone Age – The Lost Art of Keeping a Secret<br />
+00:03:47 - Avaus, uusi Radio Helsingin studio, Custom Sounds ja Gene Trautmann (Miracle Workers / QOTSA)<br />
+00:08:33 - Musiikki: Bill Withers – Use Me<br />
+00:12:14 - Musiikki: Ol' Dirty Bastard (feat. Kelis) – Got Your Money<br />
+00:16:11 - Bill Withers, Ol' Dirty Bastard ja laskujen maksu<br />
+00:17:21 - Mainoskatko<br />
+00:19:10 - Musiikki: Unicef – Käkimassaa<br />
+00:20:37 - Unicef, Pave Maijanen ja Remu, Sanni-kohu sekä Lepakkoluolan historia<br />
+00:32:31 - Musiikki: Lama – Ajatuksen loppu<br />
+00:34:27 - Musiikki: Porkkalankadun paineenkorotusasema<br />
+00:37:13 - Porkkalankadun paineenkorotusasema, General Njassa, Billy Carson ja Lepakon muutos<br />
+00:39:08 - Mainoskatko<br />
+00:40:26 - Musiikki: Bad Brains<br />
+00:41:30 - Bad Brainsin H.R., The Longnecks -soulbändi ja kamakopin muistot<br />
+00:44:00 - Musiikki: Misfits – Where Eagles Dare<br />
+00:46:08 - Punk-segmentti, H.R.:n Madonna-diili ja Refusedin esittely<br />
+00:48:15 - Musiikki: Refused<br />
+00:51:57 - Musiikki: L7 – Shitlist<br />
+00:54:39 - L7, Donita Sparks, Jennifer Finch ja Natural Born Killers<br />
+00:57:17 - Mainoskatko<br />
+00:59:44 - Musiikki: Stone Temple Pilots – All in the Suit That You Wear<br />
+01:03:19 - Scott Weiland, Ranen vieroitushoito Las Encinasissa 1997 ja Dr. Drew Pinsky<br />
+01:08:05 - Musiikki: Pink Floyd – Lucifer Sam<br />
+01:11:10 - Ohjelman nimiehdotukset, Leo Lahden NHL-raportit, Ville Nieminen ja Melrosen L.A.-levysessio<br />
+01:15:03 - Musiikki: The Mamas &amp; the Papas – California Dreamin'<br />
+01:17:24 - Mainoskatko<br />
+01:19:24 - Tokelan lapsuusmuisto Koivukylästä 1976: Erkki Hampunpunoja, leipäveitsi ja ralliajelu soramontulla<br />
+01:28:26 - Musiikki: Jimi Hendrix – All Along the Watchtower<br />
+01:32:26 - Ranen lapsuuden nukkumaanmenobiisi tyynyn alta<br />
+01:34:00 - Musiikki: Buddy Holly – Everyday<br />
+01:36:22 - Buddy Holly, Keisari Aarnio -kirja ja L.A.:n Rampart-poliisiskandaalin alustus<br />
+01:38:23 - Mainoskatko<br />
+01:39:47 - Musiikki: N.W.A – Fuck tha Police<br />
+01:45:37 - L.A.:n Rampart-skandaali, CRASH-yksikkö, Rafael Perez, Temple Street Gang ja oselottikissat<br />
+01:51:34 - Musiikki: Rage Against the Machine<br />
+01:58:23 - Mainoskatko<br />
+02:00:21 - Musiikki: Sly &amp; the Family Stone – If You Want Me to Stay<br />
+02:03:21 - Rage Against the Machine, Sly Stonen Fresh-levy ja asuntoautovaihe<br />
+02:06:02 - Musiikki: The Verve – The Drugs Don't Work<br />
+02:11:12 - Ranen synkät L.A.-vuodet, Atomirotan biisien synty ja Philthy ”Animal” Taylorin palanut kämppä<br />
+02:15:17 - Musiikki: The Equals – Baby, Come Back<br />
+02:17:55 - Philthy ”Animal” Taylor: soul-bändin keikka, Twist Twist Erkinharju, Leningrad Cowboys ja Wayne Gretzky (99)<br />
+02:26:21 - Musiikki: The Valentines – Gun Fever<br />
+02:29:08 - Mainoskatko<br />
+02:30:52 - Philthy ”Animal” Taylor kiipeää sähkötolppaan NHL-matsin vuoksi ja kaataa jerrykannullisen Tequila Sunrisea<br />
+02:35:50 - Musiikki: The Selecter – Too Much Pressure<br />
+02:38:53 - Loppusuoran fiilistelyä ja seuraavat keskiviikot<br />
+02:39:48 - Musiikki: Liam Lynch – United States of Whatever<br />
+02:41:26 - Musiikki: Rancid – Radio<br />
+02:44:10 - Talonmies Bob Russo: taideteos Emmylou Harrisille, ruohonleikkurimatka Philadelphiaan ja nunchakut Orange Drivella<br />
+02:51:28 - Musiikki: The Rolling Stones – Street Fighting Man<br />
+02:54:14 - Eddie Kramerin kasettimankka-äänitys ja ensimmäisen lähetyksen päätös<br />
+02:55:44 - Musiikki: Steve Earle – Down the Road</p>]]></content:encoded>
       <enclosure url="https://radiohelsinki-podcast.s3.amazonaws.com/rh2017ondemand/20170301_rane%26tokela_OD.mp3"
                  length="342619705"
                  type="audio/mpeg" />
