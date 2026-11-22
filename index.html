@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Rane Raitsikka ja Tokela – Podcast-arkisto</title>
+  <style>
+    :root {
+      --bg: #0f1014;
+      --card: #181a21;
+      --card-hover: #1e212b;
+      --border: #2a2e3b;
+      --text: #eceef4;
+      --muted: #9aa1b2;
+      --accent: #f59e0b;
+      --accent-soft: rgba(245, 158, 11, 0.14);
+      --music: #60a5fa;
+      --ad: #6b7280;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+    .hero {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      background: linear-gradient(135deg, #1b1d26 0%, #14151c 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .hero-cover {
+      width: 148px;
+      height: 148px;
+      border-radius: 12px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+    }
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .stat strong { color: var(--text); }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #232634;
+      color: var(--text);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn:hover { background: #2d3142; border-color: #3f455c; }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #111;
+    }
+    .btn-primary:hover { background: #fbbf24; border-color: #fbbf24; }
+    .rss-bar {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .rss-url {
+      flex: 1;
+      min-width: 0;
+      background: #0d0e13;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .search-box {
+      margin-bottom: 24px;
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(24, 26, 33, 0.95);
+      backdrop-filter: blur(8px);
+      color: var(--text);
+      font-size: 0.98rem;
+      outline: none;
+    }
+    .search-box input:focus { border-color: var(--accent); }
+    .season-title {
+      font-size: 1.2rem;
+      margin: 28px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .season-count {
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 0.92rem;
+    }
+    .ep-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .ep-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .ep-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .ep-badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .ep-card h3 {
+      margin: 0;
+      font-size: 1.12rem;
+    }
+    .ep-meta {
+      display: flex;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      padding-top: 2px;
+    }
+    .ep-desc {
+      margin: 6px 0 12px;
+      color: #cfd4e0;
+      font-size: 0.93rem;
+    }
+    .ep-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 0.84rem;
+    }
+    .ep-links a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .ep-links a:hover { text-decoration: underline; }
+    .ep-chapters summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      user-select: none;
+      padding: 4px 0;
+    }
+    .ep-chapters summary:hover { color: var(--text); }
+    .ch-list {
+      list-style: none;
+      margin: 10px 0 0;
+      padding: 10px 0 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ch-row {
+      display: flex;
+      gap: 8px;
+      font-size: 0.86rem;
+      padding: 3px 6px;
+      border-radius: 6px;
+    }
+    .ch-row:hover { background: rgba(255,255,255,0.03); }
+    .ch-ts {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .ch-icon {
+      width: 14px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .ch-music { color: var(--music); }
+    .ch-ad { color: var(--ad); font-size: 0.81rem; }
+    .ch-talk { color: var(--text); }
+    .hidden { display: none !important; }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--muted); }
+    @media (max-width: 640px) {
+      .hero { flex-direction: column; text-align: center; }
+      .stats, .actions { justify-content: center; }
+      .ep-head { flex-direction: column; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <img src="cover.jpg" alt="Rane Raitsikka ja Tokela" class="hero-cover" />
+      <div style="flex:1;min-width:0;">
+        <h1>Rane Raitsikka ja Tokela – Arkisto</h1>
+        <p>Radio Helsingin ohjelmajaksot (2017–2018) Podcasting 2.0 -luvuilla, aikaleimoilla ja siivotuilla tekstityksillä. Ääni suoratoistetaan suoraan Radio Helsingin arkistosta.</p>
+        <div class="stats">
+          <span class="stat"><strong>3 / 45</strong> jaksoa julkaistu</span>
+          <span class="stat"><strong>9.0 h</strong> kuunneltavaa</span>
+          <span class="stat"><strong>152</strong> lukua</span>
+          <span class="stat"><strong>76</strong> kappaletta</span>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="copyBtn" type="button">Kopioi RSS-osoite</button>
+          <a class="btn" href="podcast://teemuhkoski.github.io/rh-arkisto-feed/feed.xml">Apple Podcasts</a>
+          <a class="btn" href="pktc://subscribe/teemuhkoski.github.io/rh-arkisto-feed/feed.xml">Pocket Casts</a>
+          <a class="btn" href="feed.xml">Avaa feed.xml</a>
+        </div>
+        <div class="rss-bar">
+          <input class="rss-url" id="rssUrl" type="text" readonly value="https://teemuhkoski.github.io/rh-arkisto-feed/feed.xml" />
+        </div>
+      </div>
+    </header>
+
+    <div class="search-box">
+      <input id="searchInput" type="search" placeholder="Hae artistia, biisiä, henkilöä, paikkaa tai tarinaa (esim. Lepakko, Keith Richards, Motörhead)..." />
+    </div>
+
+    <main id="archiveMain">
+      
+    <section class="season-section" data-season="1">
+      <h2 class="season-title">Kausi 1 (Kevät 2017) <span class="season-count">(3 jaksoa julkaistu)</span></h2>
+      <div class="ep-grid">
+      <article class="ep-card" data-search="kausi 1, jakso 01 (2017-03-01) 1.3.2017 rane &amp; tokela ekan jakson aiheita mm: gene troutman, lepakkoluola, h.r. bad brains, l7, lapsuuden laulut, rampart scandal, sly stone, philthy phil animal taylor ja talonmies bob. intro ja musiikki: queens of the stone age – the lost art of keeping a secret avaus, uusi radio helsingin studio, custom sounds ja gene trautmann (miracle workers / qotsa) musiikki: bill withers – use me musiikki: ol&#x27; dirty bastard (feat. kelis) – got your money bill withers, ol&#x27; dirty bastard ja laskujen maksu mainoskatko musiikki: unicef – käkimassaa unicef, pave maijanen ja remu, sanni-kohu sekä lepakkoluolan historia musiikki: lama – ajatuksen loppu musiikki: porkkalankadun paineenkorotusasema porkkalankadun paineenkorotusasema, general njassa, billy carson ja lepakon muutos mainoskatko musiikki: bad brains bad brainsin h.r., the longnecks -soulbändi ja kamakopin muistot musiikki: misfits – where eagles dare punk-segmentti, h.r.:n madonna-diili ja refusedin esittely musiikki: refused musiikki: l7 – shitlist l7, donita sparks, jennifer finch ja natural born killers mainoskatko musiikki: stone temple pilots – all in the suit that you wear scott weiland, ranen vieroitushoito las encinasissa 1997 ja dr. drew pinsky musiikki: pink floyd – lucifer sam ohjelman nimiehdotukset, leo lahden nhl-raportit, ville nieminen ja melrosen l.a.-levysessio musiikki: the mamas &amp; the papas – california dreamin&#x27; mainoskatko tokelan lapsuusmuisto koivukylästä 1976: erkki hampunpunoja, leipäveitsi ja ralliajelu soramontulla musiikki: jimi hendrix – all along the watchtower ranen lapsuuden nukkumaanmenobiisi tyynyn alta musiikki: buddy holly – everyday buddy holly, keisari aarnio -kirja ja l.a.:n rampart-poliisiskandaalin alustus mainoskatko musiikki: n.w.a – fuck tha police l.a.:n rampart-skandaali, crash-yksikkö, rafael perez, temple street gang ja oselottikissat musiikki: rage against the machine mainoskatko musiikki: sly &amp; the family stone – if you want me to stay rage against the machine, sly stonen fresh-levy ja asuntoautovaihe musiikki: the verve – the drugs don&#x27;t work ranen synkät l.a.-vuodet, atomirotan biisien synty ja philthy ”animal” taylorin palanut kämppä musiikki: the equals – baby, come back philthy ”animal” taylor: soul-bändin keikka, twist twist erkinharju, leningrad cowboys ja wayne gretzky (99) musiikki: the valentines – gun fever mainoskatko philthy ”animal” taylor kiipeää sähkötolppaan nhl-matsin vuoksi ja kaataa jerrykannullisen tequila sunrisea musiikki: the selecter – too much pressure loppusuoran fiilistelyä ja seuraavat keskiviikot musiikki: liam lynch – united states of whatever musiikki: rancid – radio talonmies bob russo: taideteos emmylou harrisille, ruohonleikkurimatka philadelphiaan ja nunchakut orange drivella musiikki: the rolling stones – street fighting man eddie kramerin kasettimankka-äänitys ja ensimmäisen lähetyksen päätös musiikki: steve earle – down the road">
+        <div class="ep-head">
+          <div>
+            <span class="ep-badge">Kausi 1 · Jakso 01</span>
+            <h3>Kausi 1, Jakso 01 (2017-03-01)</h3>
+          </div>
+          <div class="ep-meta">
+            <span>1.3.2017</span>
+            <span>02:58:27</span>
+          </div>
+        </div>
+        <p class="ep-desc">Rane &amp; Tokela ekan jakson aiheita mm: Gene Troutman, Lepakkoluola, H.R. Bad Brains, L7, lapsuuden laulut, Rampart scandal, Sly Stone, Philthy Phil Animal Taylor ja Talonmies Bob.</p>
+        <div class="ep-links"><a href="https://radiohelsinki-podcast.s3.amazonaws.com/rh2017ondemand/20170301_rane%26tokela_OD.mp3" target="_blank" rel="noopener">MP3 (S3)</a> <a href="chapters/chapters_01.json" target="_blank" rel="noopener">Chapters JSON</a> <a href="transcripts/transcript_01.vtt" target="_blank" rel="noopener">Tekstitys (VTT)</a></div>
+        <details class="ep-chapters">
+          <summary>Näytä luvut ja soitetut kappaleet (53 kpl)</summary>
+          <ul class="ch-list">
+            <li class="ch-row ch-music"><span class="ch-ts">00:00:00</span><span class="ch-icon">♪</span><span class="ch-title">Intro ja Musiikki: Queens of the Stone Age – The Lost Art of Keeping a Secret</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:03:47</span><span class="ch-icon">▸</span><span class="ch-title">Avaus, uusi Radio Helsingin studio, Custom Sounds ja Gene Trautmann (Miracle Workers / QOTSA)</span></li><li class="ch-row ch-music"><span class="ch-ts">00:08:33</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Bill Withers – Use Me</span></li><li class="ch-row ch-music"><span class="ch-ts">00:12:14</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Ol&#x27; Dirty Bastard (feat. Kelis) – Got Your Money</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:16:11</span><span class="ch-icon">▸</span><span class="ch-title">Bill Withers, Ol&#x27; Dirty Bastard ja laskujen maksu</span></li><li class="ch-row ch-ad"><span class="ch-ts">00:17:21</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">00:19:10</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Unicef – Käkimassaa</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:20:37</span><span class="ch-icon">▸</span><span class="ch-title">Unicef, Pave Maijanen ja Remu, Sanni-kohu sekä Lepakkoluolan historia</span></li><li class="ch-row ch-music"><span class="ch-ts">00:32:31</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Lama – Ajatuksen loppu</span></li><li class="ch-row ch-music"><span class="ch-ts">00:34:27</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Porkkalankadun paineenkorotusasema</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:37:13</span><span class="ch-icon">▸</span><span class="ch-title">Porkkalankadun paineenkorotusasema, General Njassa, Billy Carson ja Lepakon muutos</span></li><li class="ch-row ch-ad"><span class="ch-ts">00:39:08</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">00:40:26</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Bad Brains</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:41:30</span><span class="ch-icon">▸</span><span class="ch-title">Bad Brainsin H.R., The Longnecks -soulbändi ja kamakopin muistot</span></li><li class="ch-row ch-music"><span class="ch-ts">00:44:00</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Misfits – Where Eagles Dare</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:46:08</span><span class="ch-icon">▸</span><span class="ch-title">Punk-segmentti, H.R.:n Madonna-diili ja Refusedin esittely</span></li><li class="ch-row ch-music"><span class="ch-ts">00:48:15</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Refused</span></li><li class="ch-row ch-music"><span class="ch-ts">00:51:57</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: L7 – Shitlist</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:54:39</span><span class="ch-icon">▸</span><span class="ch-title">L7, Donita Sparks, Jennifer Finch ja Natural Born Killers</span></li><li class="ch-row ch-ad"><span class="ch-ts">00:57:17</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">00:59:44</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Stone Temple Pilots – All in the Suit That You Wear</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:03:19</span><span class="ch-icon">▸</span><span class="ch-title">Scott Weiland, Ranen vieroitushoito Las Encinasissa 1997 ja Dr. Drew Pinsky</span></li><li class="ch-row ch-music"><span class="ch-ts">01:08:05</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Pink Floyd – Lucifer Sam</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:11:10</span><span class="ch-icon">▸</span><span class="ch-title">Ohjelman nimiehdotukset, Leo Lahden NHL-raportit, Ville Nieminen ja Melrosen L.A.-levysessio</span></li><li class="ch-row ch-music"><span class="ch-ts">01:15:03</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Mamas &amp; the Papas – California Dreamin&#x27;</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:17:24</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:19:24</span><span class="ch-icon">▸</span><span class="ch-title">Tokelan lapsuusmuisto Koivukylästä 1976: Erkki Hampunpunoja, leipäveitsi ja ralliajelu soramontulla</span></li><li class="ch-row ch-music"><span class="ch-ts">01:28:26</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Jimi Hendrix – All Along the Watchtower</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:32:26</span><span class="ch-icon">▸</span><span class="ch-title">Ranen lapsuuden nukkumaanmenobiisi tyynyn alta</span></li><li class="ch-row ch-music"><span class="ch-ts">01:34:00</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Buddy Holly – Everyday</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:36:22</span><span class="ch-icon">▸</span><span class="ch-title">Buddy Holly, Keisari Aarnio -kirja ja L.A.:n Rampart-poliisiskandaalin alustus</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:38:23</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">01:39:47</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: N.W.A – Fuck tha Police</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:45:37</span><span class="ch-icon">▸</span><span class="ch-title">L.A.:n Rampart-skandaali, CRASH-yksikkö, Rafael Perez, Temple Street Gang ja oselottikissat</span></li><li class="ch-row ch-music"><span class="ch-ts">01:51:34</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Rage Against the Machine</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:58:23</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">02:00:21</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Sly &amp; the Family Stone – If You Want Me to Stay</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:03:21</span><span class="ch-icon">▸</span><span class="ch-title">Rage Against the Machine, Sly Stonen Fresh-levy ja asuntoautovaihe</span></li><li class="ch-row ch-music"><span class="ch-ts">02:06:02</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Verve – The Drugs Don&#x27;t Work</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:11:12</span><span class="ch-icon">▸</span><span class="ch-title">Ranen synkät L.A.-vuodet, Atomirotan biisien synty ja Philthy ”Animal” Taylorin palanut kämppä</span></li><li class="ch-row ch-music"><span class="ch-ts">02:15:17</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Equals – Baby, Come Back</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:17:55</span><span class="ch-icon">▸</span><span class="ch-title">Philthy ”Animal” Taylor: soul-bändin keikka, Twist Twist Erkinharju, Leningrad Cowboys ja Wayne Gretzky (99)</span></li><li class="ch-row ch-music"><span class="ch-ts">02:26:21</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Valentines – Gun Fever</span></li><li class="ch-row ch-ad"><span class="ch-ts">02:29:08</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:30:52</span><span class="ch-icon">▸</span><span class="ch-title">Philthy ”Animal” Taylor kiipeää sähkötolppaan NHL-matsin vuoksi ja kaataa jerrykannullisen Tequila Sunrisea</span></li><li class="ch-row ch-music"><span class="ch-ts">02:35:50</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Selecter – Too Much Pressure</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:38:53</span><span class="ch-icon">▸</span><span class="ch-title">Loppusuoran fiilistelyä ja seuraavat keskiviikot</span></li><li class="ch-row ch-music"><span class="ch-ts">02:39:48</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Liam Lynch – United States of Whatever</span></li><li class="ch-row ch-music"><span class="ch-ts">02:41:26</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Rancid – Radio</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:44:10</span><span class="ch-icon">▸</span><span class="ch-title">Talonmies Bob Russo: taideteos Emmylou Harrisille, ruohonleikkurimatka Philadelphiaan ja nunchakut Orange Drivella</span></li><li class="ch-row ch-music"><span class="ch-ts">02:51:28</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Rolling Stones – Street Fighting Man</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:54:14</span><span class="ch-icon">▸</span><span class="ch-title">Eddie Kramerin kasettimankka-äänitys ja ensimmäisen lähetyksen päätös</span></li><li class="ch-row ch-music"><span class="ch-ts">02:55:44</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Steve Earle – Down the Road</span></li>
+          </ul>
+        </details>
+      </article>
+      <article class="ep-card" data-search="kausi 1, jakso 02 (2017-03-08) 8.3.2017 ranen ja tokelan tokassa ohjelmassa puhuttiin mm. seuraavista aiheista: robert gordon, salt &#x27;n&#x27; pepa, d.h. peligro, suicidal tendencies, läheltä piti #1, aaron neville &amp; larry williams timanttivarkaissa, wilko johnson, älä ole raija (forström) ja snoop dogg. intro ja musiikki: ramones – do you remember rock &#x27;n&#x27; roll radio? musiikki: koko taylor – wang dang doodle naistenpäivän avaus, yhteistyökumppanit ja rock against racism musiikki: robert gordon – the woman tokelan kohtaamiset robert gordonin kanssa: takahuoneesta pyhätunturille musiikki: en vogue – free your mind mainoskatko musiikki: salt-n-pepa (feat. en vogue) – whatta man tokela, leningrad cowboys ja salt-n-pepa mtv video music awardsissa 1994 musiikki: dead kennedys – holiday in cambodia dead kennedys tavastialla 1982, d.h. peligro ja ranen vieroitushoito musiikki: sublime – what i got mainoskatko sublimen bradley nowellin lesken lahjoitus muusikoiden avustusohjelmalle musiikki: stretch – why did you do it? musiikki: parliament – mothership connection / funkentelechy lock, stock and two smoking barrels, george clinton ja ulkomaan kuuntelijat musiikki: james brown – the boss mainoskatko musiikki: chuck berry – jaguar and thunderbird tiketti-kilpailu: 40. fhra american car show musiikki: suicidal tendencies – psycho vision suicidal tendenciesin keikat, venice 13 -katujengi ja välikohtaus hollywood boulevardilla musiikki: discharge – decontrol mainoskatko musiikki: wasted – no reason for existence brittipunkin muutos, discharge lepakossa ja wasted eksyminen south centraliin: huoltoaseman kuumottava tilanne ja madin .357 magnum musiikki: aerosmith – dude (looks like a lady) mainoskatko musiikki: irma thomas – time is on my side bändien nimet, ivan ja aaron neville, puhelinkortit sekä larry williamsin timanttiryöstö musiikki: aaron neville – tell it like it is musiikki: larry williams – slow down neville-klaanin ja larry williamsin fiilistelyä mainoskatko musiikki: wilko johnson &amp; roger daltrey – going back home mick green, wilko johnsonin soittotyyli, salakeikka dubrovnikissa ja marshall-vahvistimen huijaus musiikki: ian dury and the blockheads – sweet gene vincent musiikki: desmond dekker – 007 (shanty town) mainoskatko musiikki: sex pistols – did you no wrong sex pistolsin työlupakohu 1978, raija forsströmin ”elektroninen säksättävä laite” ja nykymusiikin arvostelu musiikki: laika &amp; the cosmonauts – surfs you right musiikki: snoop dogg – murder was the case mainoskatko terveiset nuorille tekijöille, laika &amp; the cosmonauts ja snoop doggin saapuminen mtv-gaalaan musiikki: slim harpo – baby scratch my back louisiana larryn hurja lapsuus, vankilavuodet ja slim harpo lapsenvahtina musiikki: the white stripes – seven nation army musiikki: beat from palookaville loppusanat ja kiitokset musiikki: faces – glad and sorry">
+        <div class="ep-head">
+          <div>
+            <span class="ep-badge">Kausi 1 · Jakso 02</span>
+            <h3>Kausi 1, Jakso 02 (2017-03-08)</h3>
+          </div>
+          <div class="ep-meta">
+            <span>8.3.2017</span>
+            <span>02:59:31</span>
+          </div>
+        </div>
+        <p class="ep-desc">Ranen ja Tokelan tokassa ohjelmassa puhuttiin mm. seuraavista aiheista: Robert Gordon, Salt &#x27;n&#x27; Pepa, D.H. Peligro, Suicidal Tendencies, läheltä piti #1, Aaron Neville &amp; Larry Williams timanttivarkaissa, Wilko Johnson, älä ole Raija (Forström) ja Snoop Dogg.</p>
+        <div class="ep-links"><a href="https://radiohelsinki-podcast.s3.amazonaws.com/rh2017ondemand/20170308_ranetokela_OD.mp3" target="_blank" rel="noopener">MP3 (S3)</a> <a href="chapters/chapters_02.json" target="_blank" rel="noopener">Chapters JSON</a> <a href="transcripts/transcript_02.vtt" target="_blank" rel="noopener">Tekstitys (VTT)</a></div>
+        <details class="ep-chapters">
+          <summary>Näytä luvut ja soitetut kappaleet (53 kpl)</summary>
+          <ul class="ch-list">
+            <li class="ch-row ch-music"><span class="ch-ts">00:00:00</span><span class="ch-icon">♪</span><span class="ch-title">Intro ja Musiikki: Ramones – Do You Remember Rock &#x27;n&#x27; Roll Radio?</span></li><li class="ch-row ch-music"><span class="ch-ts">00:03:53</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Koko Taylor – Wang Dang Doodle</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:06:28</span><span class="ch-icon">▸</span><span class="ch-title">Naistenpäivän avaus, yhteistyökumppanit ja Rock Against Racism</span></li><li class="ch-row ch-music"><span class="ch-ts">00:09:32</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Robert Gordon – The Woman</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:11:58</span><span class="ch-icon">▸</span><span class="ch-title">Tokelan kohtaamiset Robert Gordonin kanssa: takahuoneesta Pyhätunturille</span></li><li class="ch-row ch-music"><span class="ch-ts">00:15:47</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: En Vogue – Free Your Mind</span></li><li class="ch-row ch-ad"><span class="ch-ts">00:20:17</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">00:21:43</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Salt-N-Pepa (feat. En Vogue) – Whatta Man</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:25:38</span><span class="ch-icon">▸</span><span class="ch-title">Tokela, Leningrad Cowboys ja Salt-N-Pepa MTV Video Music Awardsissa 1994</span></li><li class="ch-row ch-music"><span class="ch-ts">00:29:43</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Dead Kennedys – Holiday in Cambodia</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:33:30</span><span class="ch-icon">▸</span><span class="ch-title">Dead Kennedys Tavastialla 1982, D.H. Peligro ja Ranen vieroitushoito</span></li><li class="ch-row ch-music"><span class="ch-ts">00:40:04</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Sublime – What I Got</span></li><li class="ch-row ch-ad"><span class="ch-ts">00:42:32</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:44:02</span><span class="ch-icon">▸</span><span class="ch-title">Sublimen Bradley Nowellin lesken lahjoitus muusikoiden avustusohjelmalle</span></li><li class="ch-row ch-music"><span class="ch-ts">00:45:25</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Stretch – Why Did You Do It?</span></li><li class="ch-row ch-music"><span class="ch-ts">00:48:44</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Parliament – Mothership Connection / Funkentelechy</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:54:08</span><span class="ch-icon">▸</span><span class="ch-title">Lock, Stock and Two Smoking Barrels, George Clinton ja ulkomaan kuuntelijat</span></li><li class="ch-row ch-music"><span class="ch-ts">00:57:44</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: James Brown – The Boss</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:00:43</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">01:03:20</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Chuck Berry – Jaguar and Thunderbird</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:05:39</span><span class="ch-icon">▸</span><span class="ch-title">Tiketti-kilpailu: 40. FHRA American Car Show</span></li><li class="ch-row ch-music"><span class="ch-ts">01:08:00</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Suicidal Tendencies – Psycho Vision</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:11:56</span><span class="ch-icon">▸</span><span class="ch-title">Suicidal Tendenciesin keikat, Venice 13 -katujengi ja välikohtaus Hollywood Boulevardilla</span></li><li class="ch-row ch-music"><span class="ch-ts">01:19:02</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Discharge – Decontrol</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:21:13</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">01:23:49</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Wasted – No Reason for Existence</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:26:30</span><span class="ch-icon">▸</span><span class="ch-title">Brittipunkin muutos, Discharge Lepakossa ja Wasted</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:29:09</span><span class="ch-icon">▸</span><span class="ch-title">Eksyminen South Centraliin: huoltoaseman kuumottava tilanne ja Madin .357 Magnum</span></li><li class="ch-row ch-music"><span class="ch-ts">01:36:56</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Aerosmith – Dude (Looks Like a Lady)</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:40:48</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">01:42:18</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Irma Thomas – Time Is on My Side</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:45:06</span><span class="ch-icon">▸</span><span class="ch-title">Bändien nimet, Ivan ja Aaron Neville, puhelinkortit sekä Larry Williamsin timanttiryöstö</span></li><li class="ch-row ch-music"><span class="ch-ts">01:51:50</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Aaron Neville – Tell It Like It Is</span></li><li class="ch-row ch-music"><span class="ch-ts">01:54:43</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Larry Williams – Slow Down</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:57:35</span><span class="ch-icon">▸</span><span class="ch-title">Neville-klaanin ja Larry Williamsin fiilistelyä</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:58:39</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">01:59:29</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Wilko Johnson &amp; Roger Daltrey – Going Back Home</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:01:58</span><span class="ch-icon">▸</span><span class="ch-title">Mick Green, Wilko Johnsonin soittotyyli, salakeikka Dubrovnikissa ja Marshall-vahvistimen huijaus</span></li><li class="ch-row ch-music"><span class="ch-ts">02:13:56</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Ian Dury and the Blockheads – Sweet Gene Vincent</span></li><li class="ch-row ch-music"><span class="ch-ts">02:17:19</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Desmond Dekker – 007 (Shanty Town)</span></li><li class="ch-row ch-ad"><span class="ch-ts">02:19:51</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">02:21:13</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Sex Pistols – Did You No Wrong</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:24:30</span><span class="ch-icon">▸</span><span class="ch-title">Sex Pistolsin työlupakohu 1978, Raija Forsströmin ”elektroninen säksättävä laite” ja nykymusiikin arvostelu</span></li><li class="ch-row ch-music"><span class="ch-ts">02:33:06</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Laika &amp; The Cosmonauts – Surfs You Right</span></li><li class="ch-row ch-music"><span class="ch-ts">02:36:28</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Snoop Dogg – Murder Was the Case</span></li><li class="ch-row ch-ad"><span class="ch-ts">02:39:58</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:41:05</span><span class="ch-icon">▸</span><span class="ch-title">Terveiset nuorille tekijöille, Laika &amp; The Cosmonauts ja Snoop Doggin saapuminen MTV-gaalaan</span></li><li class="ch-row ch-music"><span class="ch-ts">02:45:53</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Slim Harpo – Baby Scratch My Back</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:48:14</span><span class="ch-icon">▸</span><span class="ch-title">Louisiana Larryn hurja lapsuus, vankilavuodet ja Slim Harpo lapsenvahtina</span></li><li class="ch-row ch-music"><span class="ch-ts">02:51:34</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The White Stripes – Seven Nation Army</span></li><li class="ch-row ch-music"><span class="ch-ts">02:53:46</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Beat From Palookaville</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:55:46</span><span class="ch-icon">▸</span><span class="ch-title">Loppusanat ja kiitokset</span></li><li class="ch-row ch-music"><span class="ch-ts">02:56:29</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Faces – Glad and Sorry</span></li>
+          </ul>
+        </details>
+      </article>
+      <article class="ep-card" data-search="kausi 1, jakso 04 (2017-03-22) 22.3.2017 rane raitsikka &amp; tokela neljännen lähetyksen aiheita mm: chuck berry, kapinaorkesteri, remu, ok computer/brian mcdonald, ginger baker, keith richards, läheltä piti #3, lepakon zulut ja whiskyn pakkojuottaminen. intro ja musiikki: peter tosh – coming in hot avaus, tiketti-skaba (laineen kasperi &amp; tre-funk iii), kapinaorkesterin esittely ja rod stewart musiikki: rod stewart – let me be your car chuck berryn muistelu, johnnie johnson ja kohtaaminen house of bluesissa musiikki: chuck berry – down bound train mainoskatko musiikki: the raconteurs – steady, as she goes kapinaorkesteri ja kapinavirsi: virsikirjahistoria, remun sovitus ja hyväntekeväisyys musiikki: kapinaorkesteri – kapinavirsi joe walsh, remu, arska, iski ja lido salosen toimisto musiikki: the ruts – babylon&#x27;s burning mainoskatko musiikki: radiohead – karma police the ruts, brian mcdonald, thom yorke, ok computer ja 500 superliimattua walkmania musiikki: bad brains – sailin&#x27; on brian mcdonaldin siirto interscopelle, verenvaihdot tijuanassa ja death row records mainoskatko musiikki: the modern lovers – roadrunner tiketti-kilpailu: laineen kasperi ja edellisen viikon vastaus (anti-nowhere league) musiikki: freddie henchi &amp; the soul setters – funky to the bone musiikki: the jimi hendrix experience – sunshine of your love mainoskatko cream, ginger baker, jack bruce, gary moore ja midfyn-festivaalin lääkärikoppi musiikki: fela kuti musiikki: fleetwood mac – rattlesnake shake mainoskatko musiikki: keith richards – you shouldn&#x27;t take it so hard keith richardsin puhelu ranelle, ivan neville ja bruce willisin lentokonehalli musiikki: ronnie wood – can&#x27;t stand the rain ronnie wood, basisti sean salmonin traaginen kohtalo ja toisen tunnin päätös mainoskatko kolmannen tunnin avaus ja läheltä piti -teeman pohjustus musiikki: beastie boys – sabotage beastie boys ja läheltä piti #3: hollywoodin kauppareissu, crack-muodonmuutos ja mcdonald&#x27;sin autoryöstö musiikki: brant bjork – automatic fantastic mainoskatko musiikki: whiskeytown brant bjorkin grilli-ilta (lemmy &amp; nick oliveri), whiskeytown ja brad rice ronnie woodin tukihenkilönä lepakon zulut saksassa, ranen rumpusoolo ja 5 litran johnnie walker -viskipullon pakkojuotto musiikki: doris troy – just one look mainoskatko musiikki: the detroit cobras – shout bamalama the detroit cobras hobokenissa ja mink devillen esittely musiikki: mink deville – venus of avenue d loppuyhteenveto ja kiitokset musiikki: buffalo springfield – kind woman">
+        <div class="ep-head">
+          <div>
+            <span class="ep-badge">Kausi 1 · Jakso 04</span>
+            <h3>Kausi 1, Jakso 04 (2017-03-22)</h3>
+          </div>
+          <div class="ep-meta">
+            <span>22.3.2017</span>
+            <span>02:59:14</span>
+          </div>
+        </div>
+        <p class="ep-desc">Rane Raitsikka &amp; Tokela neljännen lähetyksen aiheita mm: Chuck Berry, Kapinaorkesteri, Remu, OK Computer/Brian McDonald, Ginger Baker, Keith Richards, läheltä piti #3, Lepakon Zulut ja whiskyn pakkojuottaminen.</p>
+        <div class="ep-links"><a href="https://radiohelsinki-podcast.s3.amazonaws.com/rh2017ondemand/20170322_ranetokela_OD.mp3" target="_blank" rel="noopener">MP3 (S3)</a> <a href="chapters/chapters_04.json" target="_blank" rel="noopener">Chapters JSON</a> <a href="transcripts/transcript_04.vtt" target="_blank" rel="noopener">Tekstitys (VTT)</a></div>
+        <details class="ep-chapters">
+          <summary>Näytä luvut ja soitetut kappaleet (46 kpl)</summary>
+          <ul class="ch-list">
+            <li class="ch-row ch-music"><span class="ch-ts">00:00:00</span><span class="ch-icon">♪</span><span class="ch-title">Intro ja Musiikki: Peter Tosh – Coming in Hot</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:04:17</span><span class="ch-icon">▸</span><span class="ch-title">Avaus, Tiketti-skaba (Laineen Kasperi &amp; Tre-Funk III), Kapinaorkesterin esittely ja Rod Stewart</span></li><li class="ch-row ch-music"><span class="ch-ts">00:08:06</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Rod Stewart – Let Me Be Your Car</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:12:38</span><span class="ch-icon">▸</span><span class="ch-title">Chuck Berryn muistelu, Johnnie Johnson ja kohtaaminen House of Bluesissa</span></li><li class="ch-row ch-music"><span class="ch-ts">00:17:32</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Chuck Berry – Down Bound Train</span></li><li class="ch-row ch-ad"><span class="ch-ts">00:20:25</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">00:21:41</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Raconteurs – Steady, As She Goes</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:25:17</span><span class="ch-icon">▸</span><span class="ch-title">Kapinaorkesteri ja Kapinavirsi: virsikirjahistoria, Remun sovitus ja hyväntekeväisyys</span></li><li class="ch-row ch-music"><span class="ch-ts">00:30:08</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Kapinaorkesteri – Kapinavirsi</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:33:31</span><span class="ch-icon">▸</span><span class="ch-title">Joe Walsh, Remu, Arska, Iski ja Lido Salosen toimisto</span></li><li class="ch-row ch-music"><span class="ch-ts">00:38:45</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Ruts – Babylon&#x27;s Burning</span></li><li class="ch-row ch-ad"><span class="ch-ts">00:41:07</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">00:42:41</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Radiohead – Karma Police</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:46:38</span><span class="ch-icon">▸</span><span class="ch-title">The Ruts, Brian McDonald, Thom Yorke, OK Computer ja 500 superliimattua Walkmania</span></li><li class="ch-row ch-music"><span class="ch-ts">00:56:29</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Bad Brains – Sailin&#x27; On</span></li><li class="ch-row ch-talk"><span class="ch-ts">00:58:18</span><span class="ch-icon">▸</span><span class="ch-title">Brian McDonaldin siirto Interscopelle, verenvaihdot Tijuanassa ja Death Row Records</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:00:41</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">01:02:04</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Modern Lovers – Roadrunner</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:05:43</span><span class="ch-icon">▸</span><span class="ch-title">Tiketti-kilpailu: Laineen Kasperi ja edellisen viikon vastaus (Anti-Nowhere League)</span></li><li class="ch-row ch-music"><span class="ch-ts">01:09:27</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Freddie Henchi &amp; The Soul Setters – Funky to the Bone</span></li><li class="ch-row ch-music"><span class="ch-ts">01:13:17</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Jimi Hendrix Experience – Sunshine of Your Love</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:19:27</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:22:17</span><span class="ch-icon">▸</span><span class="ch-title">Cream, Ginger Baker, Jack Bruce, Gary Moore ja Midfyn-festivaalin lääkärikoppi</span></li><li class="ch-row ch-music"><span class="ch-ts">01:33:25</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Fela Kuti</span></li><li class="ch-row ch-music"><span class="ch-ts">01:36:48</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Fleetwood Mac – Rattlesnake Shake</span></li><li class="ch-row ch-ad"><span class="ch-ts">01:40:58</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">01:42:40</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Keith Richards – You Shouldn&#x27;t Take It So Hard</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:45:48</span><span class="ch-icon">▸</span><span class="ch-title">Keith Richardsin puhelu Ranelle, Ivan Neville ja Bruce Willisin lentokonehalli</span></li><li class="ch-row ch-music"><span class="ch-ts">01:54:15</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Ronnie Wood – Can&#x27;t Stand the Rain</span></li><li class="ch-row ch-talk"><span class="ch-ts">01:57:16</span><span class="ch-icon">▸</span><span class="ch-title">Ronnie Wood, basisti Sean Salmonin traaginen kohtalo ja toisen tunnin päätös</span></li><li class="ch-row ch-ad"><span class="ch-ts">02:01:05</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:02:21</span><span class="ch-icon">▸</span><span class="ch-title">Kolmannen tunnin avaus ja Läheltä piti -teeman pohjustus</span></li><li class="ch-row ch-music"><span class="ch-ts">02:03:11</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Beastie Boys – Sabotage</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:05:36</span><span class="ch-icon">▸</span><span class="ch-title">Beastie Boys ja Läheltä piti #3: Hollywoodin kauppareissu, crack-muodonmuutos ja McDonald&#x27;sin autoryöstö</span></li><li class="ch-row ch-music"><span class="ch-ts">02:15:25</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Brant Bjork – Automatic Fantastic</span></li><li class="ch-row ch-ad"><span class="ch-ts">02:22:00</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">02:23:12</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Whiskeytown</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:26:00</span><span class="ch-icon">▸</span><span class="ch-title">Brant Bjorkin grilli-ilta (Lemmy &amp; Nick Oliveri), Whiskeytown ja Brad Rice Ronnie Woodin tukihenkilönä</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:31:51</span><span class="ch-icon">▸</span><span class="ch-title">Lepakon Zulut Saksassa, Ranen rumpusoolo ja 5 litran Johnnie Walker -viskipullon pakkojuotto</span></li><li class="ch-row ch-music"><span class="ch-ts">02:41:28</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Doris Troy – Just One Look</span></li><li class="ch-row ch-ad"><span class="ch-ts">02:43:58</span><span class="ch-icon">·</span><span class="ch-title">Mainoskatko</span></li><li class="ch-row ch-music"><span class="ch-ts">02:44:59</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: The Detroit Cobras – Shout Bamalama</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:46:52</span><span class="ch-icon">▸</span><span class="ch-title">The Detroit Cobras Hobokenissa ja Mink DeVillen esittely</span></li><li class="ch-row ch-music"><span class="ch-ts">02:49:18</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Mink DeVille – Venus of Avenue D</span></li><li class="ch-row ch-talk"><span class="ch-ts">02:53:56</span><span class="ch-icon">▸</span><span class="ch-title">Loppuyhteenveto ja kiitokset</span></li><li class="ch-row ch-music"><span class="ch-ts">02:55:10</span><span class="ch-icon">♪</span><span class="ch-title">Musiikki: Buffalo Springfield – Kind Woman</span></li>
+          </ul>
+        </details>
+      </article></div>
+    </section>
+    </main>
+
+    <footer>
+      Alkuperäinen ohjelma: <a href="https://www.radiohelsinki.fi/ohjelma/rane-raitsikka-tokela/" target="_blank" rel="noopener">Radio Helsinki – Rane Raitsikka &amp; Tokela</a>
+    </footer>
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const rssInput = document.getElementById('rssUrl');
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(rssInput.value);
+        copyBtn.textContent = 'Kopioitu!';
+        setTimeout(() => copyBtn.textContent = 'Kopioi RSS-osoite', 1800);
+      } catch {
+        rssInput.select();
+        document.execCommand('copy');
+      }
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    const cards = Array.from(document.querySelectorAll('.ep-card'));
+    const sections = Array.from(document.querySelectorAll('.season-section'));
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      for (const card of cards) {
+        const match = !q || card.dataset.search.includes(q);
+        card.classList.toggle('hidden', !match);
+        const det = card.querySelector('details');
+        if (det) {
+          if (q && match) {
+            det.open = true;
+            for (const row of card.querySelectorAll('.ch-row')) {
+              row.classList.toggle('hidden', !row.textContent.toLowerCase().includes(q));
+            }
+          } else {
+            det.open = false;
+            for (const row of card.querySelectorAll('.ch-row')) {
+              row.classList.remove('hidden');
+            }
+          }
+        }
+      }
+      for (const sec of sections) {
+        const anyVisible = sec.querySelector('.ep-card:not(.hidden)') !== null;
+        sec.classList.toggle('hidden', !anyVisible);
+      }
+    });
+  </script>
+</body>
+</html>

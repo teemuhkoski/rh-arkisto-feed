@@ -1,0 +1,227 @@
+{
+  "01": {
+    "duration": "02:58:27",
+    "length": 342619705,
+    "length_source": "s3"
+  },
+  "02": {
+    "duration": "02:59:31",
+    "length": 430831656,
+    "length_source": "s3"
+  },
+  "03": {
+    "duration": "02:58:39",
+    "length": 343018000,
+    "length_source": "s3"
+  },
+  "04": {
+    "duration": "02:59:14",
+    "length": 344125210,
+    "length_source": "s3"
+  },
+  "05": {
+    "duration": "03:01:28",
+    "length": 348422955,
+    "length_source": "s3"
+  },
+  "06": {
+    "duration": "02:59:10",
+    "length": 344011650,
+    "length_source": "s3"
+  },
+  "07": {
+    "duration": "02:59:08",
+    "length": 429934860,
+    "length_source": "s3"
+  },
+  "08": {
+    "duration": "03:00:52",
+    "length": 434083716,
+    "length_source": "s3"
+  },
+  "09": {
+    "duration": "03:00:58",
+    "length": 347466045,
+    "length_source": "s3"
+  },
+  "10": {
+    "duration": "03:00:28",
+    "length": 346489095,
+    "length_source": "s3"
+  },
+  "11": {
+    "duration": "02:58:23",
+    "length": 342503640,
+    "length_source": "s3"
+  },
+  "12": {
+    "duration": "03:01:50",
+    "length": 436407660,
+    "length_source": "s3"
+  },
+  "13": {
+    "duration": "02:58:37",
+    "length": 342933665,
+    "length_source": "s3"
+  },
+  "14": {
+    "duration": "02:56:50",
+    "length": 339520185,
+    "length_source": "s3"
+  },
+  "15": {
+    "duration": "02:56:58",
+    "length": 339789890,
+    "length_source": "s3"
+  },
+  "16": {
+    "duration": "03:00:13",
+    "length": 346016485,
+    "length_source": "s3"
+  },
+  "17": {
+    "duration": "03:00:12",
+    "length": 345995610,
+    "length_source": "s3"
+  },
+  "18": {
+    "duration": "03:01:07",
+    "length": 434695500,
+    "length_source": "s3"
+  },
+  "19": {
+    "duration": "03:00:27",
+    "length": 346449850,
+    "length_source": "s3"
+  },
+  "20": {
+    "duration": "03:00:35",
+    "length": 346715380,
+    "length_source": "s3"
+  },
+  "21": {
+    "duration": "02:58:11",
+    "length": 342100335,
+    "length_source": "s3"
+  },
+  "22": {
+    "duration": "03:00:06",
+    "length": 345800220,
+    "length_source": "s3"
+  },
+  "23": {
+    "duration": "03:00:57",
+    "length": 347437655,
+    "length_source": "s3"
+  },
+  "24": {
+    "duration": "03:00:34",
+    "length": 346681980,
+    "length_source": "s3"
+  },
+  "25": {
+    "duration": "02:58:15",
+    "length": 342243120,
+    "length_source": "s3"
+  },
+  "26": {
+    "duration": "02:59:03",
+    "length": 343784530,
+    "length_source": "s3"
+  },
+  "27": {
+    "duration": "03:02:50",
+    "length": 351039845,
+    "length_source": "s3"
+  },
+  "28": {
+    "duration": "03:01:23",
+    "length": 348241760,
+    "length_source": "s3"
+  },
+  "29": {
+    "duration": "02:59:43",
+    "length": 345062080,
+    "length_source": "s3"
+  },
+  "30": {
+    "duration": "03:00:36",
+    "length": 346742016,
+    "length_source": "s3"
+  },
+  "31": {
+    "duration": "03:01:48",
+    "length": 349041690,
+    "length_source": "s3"
+  },
+  "32": {
+    "duration": "02:59:32",
+    "length": 344693010,
+    "length_source": "s3"
+  },
+  "33": {
+    "duration": "03:00:57",
+    "length": 347429305,
+    "length_source": "s3"
+  },
+  "34": {
+    "duration": "02:59:15",
+    "length": 344172805,
+    "length_source": "s3"
+  },
+  "35": {
+    "duration": "03:01:47",
+    "length": 349023320,
+    "length_source": "s3"
+  },
+  "36": {
+    "duration": "02:58:56",
+    "length": 343552400,
+    "length_source": "s3"
+  },
+  "37": {
+    "duration": "03:00:30",
+    "length": 346563410,
+    "length_source": "s3"
+  },
+  "38": {
+    "duration": "02:58:56",
+    "length": 343545720,
+    "length_source": "s3"
+  },
+  "39": {
+    "duration": "02:59:24",
+    "length": 344452530,
+    "length_source": "s3"
+  },
+  "40": {
+    "duration": "03:00:50",
+    "length": 347205525,
+    "length_source": "s3"
+  },
+  "41": {
+    "duration": "02:59:26",
+    "length": 344501795,
+    "length_source": "s3"
+  },
+  "42": {
+    "duration": "03:02:39",
+    "length": 350689145,
+    "length_source": "s3"
+  },
+  "43": {
+    "duration": "03:00:44",
+    "length": 347006795,
+    "length_source": "s3"
+  },
+  "44": {
+    "duration": "02:59:48",
+    "length": 345222400,
+    "length_source": "s3"
+  },
+  "45": {
+    "duration": "03:00:47",
+    "length": 347112840,
+    "length_source": "s3"
+  }
+}

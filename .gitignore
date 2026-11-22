@@ -1,0 +1,14 @@
+# Äänitiedostot ja raakalitteroinnit (ei ikinä gittiin!)
+Rane_Raitsikka_ja_Tokela/
+*.mp3
+*.m4a
+*.m4b
+*.wav
+*.flac
+*.part
+
+# macOS ja Python
+.DS_Store
+__pycache__/
+*.pyc
+*.bak
