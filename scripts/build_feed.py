@@ -829,6 +829,9 @@ def main() -> None:
             f"    </image>\n"
         )
 
+    last_build_date = format_datetime(datetime.now(HELSINKI_TZ))
+    channel_pub_date = format_datetime(items_data[0][0]) if items_data else last_build_date
+
     feed_xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<rss version="2.0"\n'
@@ -840,6 +843,9 @@ def main() -> None:
         f"    <link>{SHOW_LINK}</link>\n"
         f'    <atom:link href="{BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />\n'
         "    <language>fi</language>\n"
+        f"    <pubDate>{channel_pub_date}</pubDate>\n"
+        f"    <lastBuildDate>{last_build_date}</lastBuildDate>\n"
+        "    <ttl>60</ttl>\n"
         "    <description>Radio Helsingin Rane Raitsikka &amp; Tokela -ohjelman jaksoarkisto (2017–2018) sisällysluettelolla ja aikaleimoilla.</description>\n"
         "    <itunes:author>Rane Raitsikka &amp; Tokela</itunes:author>\n"
         "    <itunes:type>episodic</itunes:type>\n"
