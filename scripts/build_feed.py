@@ -156,6 +156,29 @@ def load_analysis_intro(global_ep: int) -> str | None:
     return m.group(1).strip() if m else None
 
 
+def load_analysis_highlights(global_ep: int) -> list[dict[str, int | str]]:
+    md_path = ANALYSES_DIR / f"jakso{global_ep:02d}_analyysi.md"
+    if not md_path.exists():
+        return []
+    text = md_path.read_text(encoding="utf-8")
+    highlights: list[dict[str, int | str]] = []
+    for m in re.finditer(r"^\*\s+\*\*(\d{2}:\d{2}:\d{2})\s*[–-]\s*(.+?):\*\*\s*(.+)$", text, re.M):
+        ts_str, hl_title, hl_body = m.group(1), m.group(2).strip(), m.group(3).strip()
+        highlights.append(
+            {
+                "ts": ts_str,
+                "t": parse_hms_to_seconds(ts_str),
+                "title": hl_title,
+                "body": hl_body,
+            }
+        )
+    return highlights
+
+
+def json_for_script(obj: object) -> str:
+    return json.dumps(obj, ensure_ascii=False).replace("</", "<\\/")
+
+
 def cdata_safe(text: str) -> str:
     return text.replace("]]>", "]]]]><![CDATA[>")
 
@@ -201,15 +224,17 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     feed_url = f"{BASE_URL}/feed.xml"
     feed_no_scheme = feed_url.replace("https://", "")
     feed_encoded = quote(feed_url, safe="")
-    apple_url = f"podcast://{feed_no_scheme}"
-    pocketcasts_url = f"pktc://subscribe/{feed_no_scheme}"
-    overcast_url = f"overcast://x-callback-url/add?url={feed_encoded}"
-    antennapod_url = f"https://antennapod.org/deeplink/subscribe?url={feed_encoded}"
-    podcastaddict_url = f"podcastaddict://{feed_no_scheme}"
+    subscribe_links = {
+        "rss": feed_url,
+        "apple": f"podcast://{feed_no_scheme}",
+        "pocketcasts": f"pktc://subscribe/{feed_no_scheme}",
+        "overcast": f"overcast://x-callback-url/add?url={feed_encoded}",
+        "antennapod": f"https://antennapod.org/deeplink/subscribe?url={feed_encoded}",
+        "podcastaddict": f"podcastaddict://{feed_no_scheme}",
+    }
 
     total_sec = sum(parse_hms_to_seconds(ep["duration"]) for ep in published)
-    total_hours = total_sec / 3600.0
-    total_chapters = sum(len(ep["chapters"]) for ep in published)
+    total_hours = int(round(total_sec / 3600.0))
     total_songs = sum(
         1
         for ep in published
@@ -217,443 +242,1022 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         if ch["title"].lower().startswith(("musiikki:", "intro ja musiikki:", "alkumusiikki:", "loppukappale:"))
     )
 
-    by_season: dict[int, list[dict]] = {}
+    season_labels_clean = {
+        1: "Kausi 1 · Kevät 2017",
+        2: "Kausi 2 · Syksy 2017 – Tammikuu 2018",
+        3: "Kausi 3 · Syksy 2018",
+    }
+
+    episodes_js: list[dict] = []
+    all_highlights_js: list[dict] = []
+
     for ep in sorted(published, key=lambda x: x["global_ep"]):
-        by_season.setdefault(ep["season"], []).append(ep)
+        chs_js = []
+        for ch in ep["chapters"]:
+            t = int(round(ch["startTime"]))
+            title = ch["title"]
+            low = title.lower()
+            if low.startswith(("musiikki:", "intro ja musiikki:", "alkumusiikki:", "loppukappale:")):
+                kind = "music"
+            elif low.startswith("mainoskatko"):
+                kind = "ad"
+            else:
+                kind = "talk"
+            chs_js.append({"t": t, "ts": format_hms(t), "title": title, "kind": kind})
 
-    sections_html: list[str] = []
-    for season_num in sorted(by_season.keys()):
-        season_eps = by_season[season_num]
-        cards: list[str] = []
-        for ep in season_eps:
-            ch_rows = []
-            for ch in ep["chapters"]:
-                ts = format_hms(ch["startTime"])
-                title = html_lib.escape(ch["title"])
-                low = ch["title"].lower()
-                is_music = low.startswith(("musiikki:", "intro ja musiikki:", "alkumusiikki:", "loppukappale:"))
-                is_ad = low.startswith("mainos")
-                cls = "ch-music" if is_music else ("ch-ad" if is_ad else "ch-talk")
-                icon = "♪" if is_music else ("·" if is_ad else "▸")
-                ch_rows.append(
-                    f'<li class="ch-row {cls}"><span class="ch-ts">{ts}</span>'
-                    f'<span class="ch-icon">{icon}</span><span class="ch-title">{title}</span></li>'
-                )
-
-            links = [
-                f'<a href="{html_lib.escape(ep["audio_url"])}" target="_blank" rel="noopener">MP3 (S3)</a>',
-                f'<a href="{html_lib.escape(ep["chapters_rel"])}" target="_blank" rel="noopener">Chapters JSON</a>',
-            ]
-            if ep.get("vtt_rel"):
-                links.append(
-                    f'<a href="{html_lib.escape(ep["vtt_rel"])}" target="_blank" rel="noopener">Tekstitys (VTT)</a>'
-                )
-
-            search_blob = html_lib.escape(
-                " ".join(
-                    [
-                        ep["title"],
-                        ep["date_fi"],
-                        ep["intro_desc"],
-                        *(ch["title"] for ch in ep["chapters"]),
-                    ]
-                ).lower()
+        hls = ep.get("highlights", [])
+        for hl in hls:
+            all_highlights_js.append(
+                {
+                    "epId": ep["global_ep"],
+                    "ts": hl["ts"],
+                    "t": hl["t"],
+                    "title": hl["title"],
+                }
             )
 
-            cards.append(
-                f"""
-      <article class="ep-card" data-search="{search_blob}">
-        <div class="ep-head">
-          <div>
-            <span class="ep-badge">Kausi {ep['season']} · Jakso {ep['ep_in_season']:02d}</span>
-            <h3>{html_lib.escape(ep['title'])}</h3>
-          </div>
-          <div class="ep-meta">
-            <span>{html_lib.escape(ep['date_fi'])}</span>
-            <span>{html_lib.escape(ep['duration'])}</span>
-          </div>
-        </div>
-        <p class="ep-desc">{html_lib.escape(ep['intro_desc'])}</p>
-        <div class="ep-links">{' '.join(links)}</div>
-        <details class="ep-chapters">
-          <summary>Näytä sisällysluettelo ja soitetut biisit ({len(ep['chapters'])} kpl)</summary>
-          <ul class="ch-list">
-            {''.join(ch_rows)}
-          </ul>
-        </details>
-      </article>"""
-            )
-
-        sections_html.append(
-            f"""
-    <section class="season-section" data-season="{season_num}">
-      <h2 class="season-title">{html_lib.escape(SEASON_LABELS.get(season_num, f'Kausi {season_num}'))} <span class="season-count">({len(season_eps)} jaksoa julkaistu)</span></h2>
-      <div class="ep-grid">{''.join(cards)}</div>
-    </section>"""
+        episodes_js.append(
+            {
+                "id": ep["global_ep"],
+                "key": f"{ep['global_ep']:02d}",
+                "season": ep["season"],
+                "epInSeason": ep["ep_in_season"],
+                "label": f"Kausi {ep['season']}, Jakso {ep['ep_in_season']:02d}",
+                "date": ep["date_fi"],
+                "duration": ep["duration"],
+                "desc": ep["intro_desc"],
+                "audio": ep["audio_url"],
+                "chaptersRel": ep["chapters_rel"],
+                "vttRel": ep.get("vtt_rel"),
+                "chapters": chs_js,
+                "highlights": hls,
+            }
         )
 
-    cover_html = '<img src="cover.jpg" alt="Rane Raitsikka ja Tokela" class="hero-cover" />' if has_cover else ""
+    cover_html = (
+        '<img class="cover" src="cover.jpg" alt="Rane Raitsikka ja Tokela" />'
+        if has_cover
+        else ""
+    )
+
+    songs_fmt = f"{total_songs:,}".replace(",", "\u00a0")
+    episodes_json = json_for_script(episodes_js)
+    highlights_json = json_for_script(all_highlights_js)
+    subscribe_json = json_for_script(subscribe_links)
+    season_labels_json = json_for_script(season_labels_clean)
 
     return f"""<!DOCTYPE html>
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rane Raitsikka ja Tokela – Podcast-arkisto</title>
+  <meta name="description" content="Radio Helsingin Rane Raitsikka ja Tokela -ohjelman jaksoarkisto (2017–2018) sisällysluettelolla, aikaleimoilla ja äänisoittimella." />
   <style>
     :root {{
-      --bg: #0f1014;
-      --card: #181a21;
-      --card-hover: #1e212b;
-      --border: #2a2e3b;
-      --text: #eceef4;
-      --muted: #9aa1b2;
-      --accent: #f59e0b;
-      --accent-soft: rgba(245, 158, 11, 0.14);
-      --music: #60a5fa;
-      --ad: #6b7280;
+      --bg: #F6F3EC;
+      --surface: #EFECE3;
+      --ink: #141413;
+      --muted: #57554E;
+      --line: #D8D3C7;
+      --accent: #0B5D63;
+      --accent-hover: #08484D;
+      --accent-soft: rgba(11, 93, 99, 0.08);
     }}
     * {{ box-sizing: border-box; }}
+    html {{ background: var(--bg); color: var(--ink); }}
     body {{
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Inter, sans-serif;
       line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 96px;
     }}
-    .wrap {{
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 28px 18px 64px;
-    }}
-    .hero {{
+    a {{ color: var(--accent); text-decoration: none; }}
+    a:hover {{ text-decoration: underline; }}
+    .wrap {{ max-width: 920px; margin: 0 auto; padding: 28px 24px 72px; }}
+
+    .masthead {{
       display: flex;
       gap: 24px;
       align-items: center;
-      background: linear-gradient(135deg, #1b1d26 0%, #14151c 100%);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--ink);
     }}
-    .hero-cover {{
-      width: 148px;
-      height: 148px;
-      border-radius: 12px;
+    .cover {{
+      width: 120px;
+      height: 120px;
       object-fit: cover;
       flex-shrink: 0;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+      display: block;
+      border: 1px solid var(--line);
     }}
-    .hero h1 {{
-      margin: 0 0 6px;
-      font-size: 1.75rem;
-      letter-spacing: -0.02em;
-    }}
-    .hero p {{
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 0.96rem;
-    }}
-    .hero p a {{
+    .masthead-body {{ flex: 1; min-width: 0; }}
+    .eyebrow {{
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       color: var(--accent);
-      text-decoration: none;
+      margin-bottom: 4px;
     }}
-    .hero p a:hover {{ text-decoration: underline; }}
-    .stats {{
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 16px;
+    h1 {{
+      margin: 0 0 6px;
+      font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
     }}
-    .stat {{
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 4px 12px;
-      font-size: 0.82rem;
+    .lead {{
+      margin: 0 0 14px;
+      font-size: 0.94rem;
       color: var(--muted);
     }}
-    .stat strong {{ color: var(--text); }}
-    .actions {{
+    .cta-row {{
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
       align-items: center;
+      gap: 16px;
     }}
-    .btn {{
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: #232634;
-      color: var(--text);
-      transition: background 0.15s ease, border-color 0.15s ease;
-    }}
-    .btn:hover {{ background: #2d3142; border-color: #3f455c; }}
+    .sub-wrap {{ position: relative; }}
     .btn-primary {{
       background: var(--accent);
-      border-color: var(--accent);
-      color: #111;
+      color: #fff;
+      border: 1px solid var(--accent);
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.01em;
     }}
-    .btn-primary:hover {{ background: #fbbf24; border-color: #fbbf24; }}
-    .rss-bar {{
-      margin-top: 12px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
+    .btn-primary:hover {{ background: var(--accent-hover); }}
+    .btn-text {{
+      background: none;
+      border: none;
+      color: var(--ink);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--line);
     }}
-    .rss-url {{
-      flex: 1;
-      min-width: 0;
-      background: #0d0e13;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 8px;
-      padding: 7px 10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.8rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .btn-text:hover {{ color: var(--accent); border-bottom-color: var(--accent); }}
+
+    .sub-pop {{
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 288px;
+      background: #FCFBF8;
+      border: 1px solid var(--ink);
+      padding: 14px;
+      z-index: 50;
     }}
-    .rss-hint {{
-      margin-top: 8px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }}
-    .search-box {{
-      margin-bottom: 24px;
-      position: sticky;
-      top: 10px;
-      z-index: 10;
-    }}
-    .search-box input {{
+    .sub-pop.open {{ display: block; }}
+    .sub-copy {{
       width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(24, 26, 33, 0.95);
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      padding: 9px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }}
+    .sub-copy:hover {{ background: var(--accent); }}
+    .sub-apps {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 10px;
+    }}
+    .sub-apps a {{
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      padding: 6px 8px;
+      font-size: 0.81rem;
+      font-weight: 500;
+      text-align: center;
+    }}
+    .sub-apps a:hover {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
+    .sub-note {{ font-size: 0.75rem; color: var(--muted); line-height: 1.4; }}
+
+    .toolbar {{
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(246, 243, 236, 0.96);
       backdrop-filter: blur(8px);
-      color: var(--text);
-      font-size: 0.98rem;
+      padding: 14px 0 10px;
+      border-bottom: 1px solid var(--line);
+    }}
+    .toolbar-row {{
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }}
+    .search-input {{
+      flex: 1;
+      min-width: 220px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--ink);
+      padding: 7px 2px;
+      font-size: 0.96rem;
+      color: var(--ink);
       outline: none;
     }}
-    .search-box input:focus {{ border-color: var(--accent); }}
-    .season-title {{
-      font-size: 1.2rem;
-      margin: 28px 0 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }}
-    .season-count {{
+    .search-input::placeholder {{ color: #7C786E; }}
+    .search-input:focus {{ border-bottom: 2px solid var(--accent); padding-bottom: 6px; }}
+    .season-tabs {{ display: flex; gap: 4px; }}
+    .s-tab {{
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 5px 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
       color: var(--muted);
-      font-weight: 400;
-      font-size: 0.92rem;
+      cursor: pointer;
     }}
-    .ep-grid {{
+    .s-tab:hover {{ color: var(--ink); }}
+    .s-tab.active {{ color: var(--accent); border-bottom-color: var(--accent); }}
+    .quick-picks {{
+      margin-top: 8px;
+      font-size: 0.79rem;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }}
+    .quick-picks button {{
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.79rem;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-color: var(--line);
+      text-underline-offset: 3px;
+    }}
+    .quick-picks button:hover {{ color: var(--accent); text-decoration-color: var(--accent); }}
+
+    .season-heading {{
+      margin: 34px 0 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--ink);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }}
+    .ep-row {{
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      gap: 4px 16px;
+      align-items: start;
+    }}
+    .ep-play {{
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      padding-left: 2px;
+    }}
+    .ep-play:hover {{ background: var(--accent); border-color: var(--accent); color: #fff; }}
+    .ep-meta {{
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      margin-bottom: 3px;
+    }}
+    .ep-meta strong {{ color: var(--ink); font-family: inherit; font-weight: 700; margin-right: 8px; }}
+    .ep-desc {{
+      margin: 0 0 10px;
+      font-size: 0.94rem;
+      color: var(--ink);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }}
+    .ep-highlights {{
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
     }}
-    .ep-card {{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 20px;
+    .hl-btn {{
+      background: none;
+      border: none;
+      padding: 2px 0;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
     }}
-    .ep-head {{
+    .hl-btn:hover {{ color: var(--accent); }}
+    .hl-ts {{
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }}
+    .ep-setlist-btn {{
+      background: none;
+      border: 1px solid var(--line);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 2px;
+    }}
+    .ep-setlist-btn:hover, .ep-setlist-btn.active {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
+
+    .search-hits {{ margin-top: 10px; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }}
+    .hit-btn {{
+      background: var(--accent-soft);
+      border: none;
+      border-left: 2px solid var(--accent);
+      padding: 5px 10px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--ink);
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }}
+    .hit-btn:hover {{ background: rgba(11, 93, 99, 0.14); }}
+
+    .drawer-backdrop {{
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 20, 19, 0.24);
+      z-index: 60;
+    }}
+    .drawer-backdrop.open {{ display: block; }}
+    .drawer {{
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(520px, 100vw);
+      background: var(--bg);
+      border-left: 1px solid var(--ink);
+      z-index: 70;
+      transform: translateX(100%);
+      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }}
+    .drawer.open {{ transform: translateX(0); }}
+    .drawer-head {{
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 12px;
-      margin-bottom: 8px;
     }}
-    .ep-badge {{
-      display: inline-block;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.76rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 999px;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }}
-    .ep-card h3 {{
-      margin: 0;
-      font-size: 1.12rem;
-    }}
-    .ep-meta {{
-      display: flex;
-      gap: 10px;
-      color: var(--muted);
+    .drawer-title {{ margin: 0 0 4px; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }}
+    .drawer-sub {{ font-size: 0.82rem; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
+    .drawer-close {{
+      background: none;
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      cursor: pointer;
       font-size: 0.85rem;
-      white-space: nowrap;
-      padding-top: 2px;
+      color: var(--ink);
     }}
-    .ep-desc {{
-      margin: 6px 0 12px;
-      color: #cfd4e0;
-      font-size: 0.93rem;
+    .drawer-close:hover {{ border-color: var(--ink); }}
+    .drawer-body {{
+      overflow-y: auto;
+      padding: 18px 22px 110px;
+      flex: 1;
     }}
-    .ep-links {{
+    .drawer-desc {{ margin: 0 0 16px; font-size: 0.92rem; color: var(--ink); }}
+    .drawer-actions {{
+      margin-bottom: 14px;
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 10px;
-      font-size: 0.84rem;
+      align-items: center;
     }}
-    .ep-links a {{
-      color: var(--accent);
-      text-decoration: none;
-    }}
-    .ep-links a:hover {{ text-decoration: underline; }}
-    .ep-chapters summary {{
-      cursor: pointer;
+    .drawer-meta-links {{
+      display: flex;
+      gap: 12px;
+      font-size: 0.78rem;
       color: var(--muted);
-      font-size: 0.88rem;
+    }}
+    .drawer-meta-links a {{ color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }}
+    .drawer-meta-links a:hover {{ color: var(--accent); }}
+    .drawer-section-label {{
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 20px 0 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }}
+    .filter-inline {{ display: flex; gap: 12px; }}
+    .filter-inline button {{
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.76rem;
       font-weight: 600;
-      user-select: none;
-      padding: 4px 0;
+      color: var(--muted);
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
     }}
-    .ep-chapters summary:hover {{ color: var(--text); }}
-    .ch-list {{
-      list-style: none;
-      margin: 10px 0 0;
-      padding: 10px 0 0;
-      border-top: 1px solid var(--border);
+    .filter-inline button.active {{ color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }}
+    .ch-item {{
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 4px;
+      text-align: left;
+      cursor: pointer;
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }}
-    .ch-row {{
-      display: flex;
-      gap: 8px;
+      gap: 10px;
+      align-items: baseline;
       font-size: 0.86rem;
-      padding: 3px 6px;
-      border-radius: 6px;
+      color: var(--ink);
     }}
-    .ch-row:hover {{ background: rgba(255,255,255,0.03); }}
-    .ch-ts {{
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      color: var(--muted);
-      flex-shrink: 0;
+    .ch-item:hover {{ background: var(--accent-soft); }}
+    .ch-item.is-playing {{ background: var(--accent-soft); font-weight: 600; }}
+    .ch-ts {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.78rem; color: var(--muted); flex-shrink: 0; }}
+    .ch-music .ch-ts, .ch-music .ch-label {{ color: var(--accent); }}
+    .hl-card {{
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
     }}
-    .ch-icon {{
-      width: 14px;
-      text-align: center;
-      flex-shrink: 0;
+    .hl-card button {{
+      background: none; border: none; padding: 0; text-align: left; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: var(--ink);
     }}
-    .ch-music {{ color: var(--music); }}
-    .ch-ad {{ color: var(--ad); font-size: 0.81rem; }}
-    .ch-talk {{ color: var(--text); }}
-    .hidden {{ display: none !important; }}
+    .hl-card button:hover {{ color: var(--accent); }}
+    .hl-card p {{ margin: 4px 0 0; font-size: 0.83rem; color: var(--muted); }}
+
     footer {{
-      margin-top: 40px;
-      text-align: center;
+      margin-top: 56px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      font-size: 0.8rem;
       color: var(--muted);
-      font-size: 0.82rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
     }}
-    footer a {{ color: var(--muted); }}
+
+    .player-bar {{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: #141413;
+      color: #F6F3EC;
+      z-index: 90;
+      transform: translateY(110%);
+      transition: transform 0.2s ease;
+      border-top: 2px solid var(--accent);
+    }}
+    .player-bar.visible {{ transform: translateY(0); }}
+    .player-inner {{
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 10px 18px 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }}
+    .p-play {{
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #F6F3EC; color: #141413; border: none; cursor: pointer; font-size: 0.8rem; flex-shrink: 0;
+    }}
+    .p-meta {{ flex: 1; min-width: 0; cursor: pointer; }}
+    .p-ep {{ font-size: 0.72rem; color: #A6A298; }}
+    .p-title {{ font-size: 0.86rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .p-controls {{ display: flex; gap: 4px; flex-wrap: nowrap; }}
+    .p-btn, .p-close {{
+      background: none; border: 1px solid #353430; color: #F6F3EC;
+      padding: 4px 7px; font-size: 0.75rem; cursor: pointer;
+    }}
+    .p-btn:hover, .p-close:hover {{ border-color: #F6F3EC; }}
+    .p-time {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; color: #A6A298; white-space: nowrap; }}
+    .p-progress {{ width: 100%; display: block; accent-color: #0B5D63; margin: 0; height: 4px; cursor: pointer; }}
+
     @media (max-width: 640px) {{
-      .hero {{ flex-direction: column; text-align: center; }}
-      .stats, .actions {{ justify-content: center; }}
-      .ep-head {{ flex-direction: column; gap: 4px; }}
+      .wrap {{ padding: 18px 16px 88px; }}
+      .masthead {{ gap: 16px; align-items: flex-start; }}
+      .cover {{ width: 84px; height: 84px; }}
+      .ep-row {{ grid-template-columns: 34px 1fr; }}
+      .ep-setlist-btn {{ grid-column: 2; justify-self: start; margin-top: 8px; }}
+      .p-time, #pSpeedBtn, #pReroll {{ display: none; }}
     }}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header class="hero">
+    <header class="masthead">
       {cover_html}
-      <div style="flex:1;min-width:0;">
-        <h1>Rane Raitsikka ja Tokela – Arkisto</h1>
-        <p>Radio Helsingin ohjelmajaksot (2017–2018) sisällysluettelolla, aikaleimoilla ja siivotuilla tekstityksillä. Ääni toistetaan suoraan <a href="{SHOW_LINK}" target="_blank" rel="noopener">Radio Helsingin arkistosta</a>. Tämä on radiokanavasta riippumaton harrasteprojekti.</p>
-        <div class="stats">
-          <span class="stat"><strong>{len(published)} / {total_episodes}</strong> jaksoa julkaistu</span>
-          <span class="stat"><strong>{total_hours:.1f} h</strong> kuunneltavaa</span>
-          <span class="stat"><strong>{total_chapters}</strong> chapteria</span>
-          <span class="stat"><strong>{total_songs}</strong> biisiä</span>
+      <div class="masthead-body">
+        <div class="eyebrow">Radio Helsinki · Keskiviikkoillat 2017–2018</div>
+        <h1>Rane Raitsikka ja Tokela</h1>
+        <p class="lead">{len(published)} jaksoa · {total_hours} h · {songs_fmt} kappaletta. Ääni toistetaan suoraan <a href="{SHOW_LINK}" target="_blank" rel="noopener">Radio Helsingin arkistosta</a>. Radiokanavasta riippumaton harrasteprojekti.</p>
+        <div class="cta-row">
+          <div class="sub-wrap">
+            <button class="btn-primary" id="subBtn" type="button" aria-expanded="false">Tilaa podcast ▾</button>
+            <div class="sub-pop" id="subPop" role="dialog" aria-label="Tilaa podcast">
+              <button class="sub-copy" id="copyRssBtn" type="button">Kopioi RSS-osoite</button>
+              <div class="sub-apps">
+                <a href="{html_lib.escape(subscribe_links['apple'])}">Apple Podcasts</a>
+                <a href="{html_lib.escape(subscribe_links['pocketcasts'])}">Pocket Casts</a>
+                <a href="{html_lib.escape(subscribe_links['overcast'])}">Overcast</a>
+                <a href="{html_lib.escape(subscribe_links['antennapod'])}" target="_blank" rel="noopener">AntennaPod</a>
+                <a href="{html_lib.escape(subscribe_links['podcastaddict'])}">Podcast Addict</a>
+                <a href="feed.xml">Avaa feed.xml</a>
+              </div>
+              <div class="sub-note">RSS-osoitteen voi liittää myös esim. YouTube Musiciin (Kirjasto → Podcastit → Lisää RSS-syötteen avulla) tai Castroon. Spotify ei tue suoria RSS-syötteitä.</div>
+            </div>
+          </div>
+          <button class="btn-text" id="randomBtn" type="button">▶ Satunnainen tarina</button>
         </div>
-        <div class="actions">
-          <button class="btn btn-primary" id="copyBtn" type="button">Kopioi RSS-osoite</button>
-          <a class="btn" href="{html_lib.escape(apple_url)}">Apple Podcasts</a>
-          <a class="btn" href="{html_lib.escape(pocketcasts_url)}">Pocket Casts</a>
-          <a class="btn" href="{html_lib.escape(overcast_url)}">Overcast</a>
-          <a class="btn" href="{html_lib.escape(antennapod_url)}" target="_blank" rel="noopener">AntennaPod</a>
-          <a class="btn" href="{html_lib.escape(podcastaddict_url)}">Podcast Addict</a>
-          <a class="btn" href="feed.xml">Avaa feed.xml</a>
-        </div>
-        <div class="rss-bar">
-          <input class="rss-url" id="rssUrl" type="text" readonly value="{html_lib.escape(feed_url)}" />
-        </div>
-        <div class="rss-hint">RSS-osoitteen voi liittää myös esim. YouTube Musiciin (Kirjasto → Podcastit → Lisää RSS-syötteen avulla) tai Castroon. Spotify ei tue suoria RSS-syötteitä.</div>
       </div>
     </header>
 
-    <div class="search-box">
-      <input id="searchInput" type="search" placeholder="Hae artistia, biisiä, henkilöä, paikkaa tai tarinaa (esim. Lepakko, Keith Richards, Motörhead)..." />
+    <div class="toolbar">
+      <div class="toolbar-row">
+        <input class="search-input" id="searchInput" type="search" placeholder="Hae biisiä, bändiä, paikkaa tai tarinaa..." />
+        <div class="season-tabs" role="tablist">
+          <button class="s-tab active" data-season="all" type="button">Kaikki</button>
+          <button class="s-tab" data-season="1" type="button">K1</button>
+          <button class="s-tab" data-season="2" type="button">K2</button>
+          <button class="s-tab" data-season="3" type="button">K3</button>
+        </div>
+      </div>
+      <div class="quick-picks" id="quickPicks">
+        <span>Kokeile:</span>
+        <button type="button" data-q="Lepakko">Lepakko</button>
+        <button type="button" data-q="The Rolling Stones">The Rolling Stones</button>
+        <button type="button" data-q="Hollywood">Hollywood</button>
+        <button type="button" data-q="The Meters">The Meters</button>
+        <button type="button" data-q="Lätkä">Lätkä</button>
+      </div>
     </div>
 
-    <main id="archiveMain">
-      {''.join(sections_html)}
-    </main>
+    <main id="episodeList"></main>
 
     <footer>
-      Alkuperäinen ohjelma: <a href="{SHOW_LINK}" target="_blank" rel="noopener">Radio Helsinki – Rane Raitsikka &amp; Tokela</a>
+      <span>Radiokanavasta riippumaton harrasteprojekti · Alkuperäinen ohjelma: <a href="{SHOW_LINK}" target="_blank" rel="noopener">Radio Helsinki – Rane Raitsikka &amp; Tokela</a></span>
+      <span><a href="feed.xml">feed.xml</a></span>
     </footer>
   </div>
 
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="drawer" aria-label="Jakson settilista">
+    <div class="drawer-head">
+      <div>
+        <h2 class="drawer-title" id="drawerTitle"></h2>
+        <div class="drawer-sub" id="drawerSub"></div>
+      </div>
+      <button class="drawer-close" id="drawerClose" type="button">Sulje ✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <div class="player-bar" id="playerBar" role="region" aria-label="Äänisoitin">
+    <audio id="globalAudio" preload="none"></audio>
+    <div class="player-inner">
+      <button class="p-play" id="pPlayBtn" type="button" aria-label="Toista tai tauota">▶</button>
+      <div class="p-meta" id="pMeta" title="Avaa soivan jakson settilista">
+        <div class="p-ep" id="pEp"></div>
+        <div class="p-title" id="pTitle"></div>
+      </div>
+      <div class="p-controls">
+        <button class="p-btn" id="pPrevBtn" type="button" title="Edellinen luku">⏮</button>
+        <button class="p-btn" id="pBack15" type="button" title="-15s">-15s</button>
+        <button class="p-btn" id="pFwd30" type="button" title="+30s">+30s</button>
+        <button class="p-btn" id="pNextBtn" type="button" title="Seuraava luku">⏭</button>
+        <button class="p-btn" id="pSpeedBtn" type="button" title="Toistonopeus">1×</button>
+        <button class="p-btn" id="pReroll" type="button" title="Arvo toinen tarina">↻ Arvo</button>
+      </div>
+      <div class="p-time" id="pTime">00:00:00</div>
+      <button class="p-close" id="pCloseBtn" type="button" aria-label="Sulje soitin">✕</button>
+    </div>
+    <input class="p-progress" id="pProgress" type="range" min="0" max="1000" value="0" aria-label="Toistokohta" />
+  </div>
+
   <script>
-    const copyBtn = document.getElementById('copyBtn');
-    const rssInput = document.getElementById('rssUrl');
-    copyBtn.addEventListener('click', async () => {{
-      try {{
-        await navigator.clipboard.writeText(rssInput.value);
-        copyBtn.textContent = 'Kopioitu!';
-        setTimeout(() => copyBtn.textContent = 'Kopioi RSS-osoite', 1800);
-      }} catch {{
-        rssInput.select();
-        document.execCommand('copy');
+    const EPISODES = {episodes_json};
+    const ALL_HIGHLIGHTS = {highlights_json};
+    const SUBSCRIBE = {subscribe_json};
+    const SEASON_LABELS = {season_labels_json};
+
+    let currentSeason = 'all';
+    let currentQuery = '';
+    let openDrawerEpId = null;
+    let drawerFilter = 'all';
+
+    const listEl = document.getElementById('episodeList');
+    const searchInput = document.getElementById('searchInput');
+    const quickPicks = document.getElementById('quickPicks');
+    const drawer = document.getElementById('drawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const drawerTitle = document.getElementById('drawerTitle');
+    const drawerSub = document.getElementById('drawerSub');
+    const drawerBody = document.getElementById('drawerBody');
+
+    const audioEl = document.getElementById('globalAudio');
+    const playerBar = document.getElementById('playerBar');
+    const pEp = document.getElementById('pEp');
+    const pTitle = document.getElementById('pTitle');
+    const pTime = document.getElementById('pTime');
+    const pPlayBtn = document.getElementById('pPlayBtn');
+    const pProgress = document.getElementById('pProgress');
+    const pSpeedBtn = document.getElementById('pSpeedBtn');
+    const SPEEDS = [1, 1.25, 1.5];
+    let speedIdx = 0;
+    let activeEp = null;
+    let activeChapterIdx = -1;
+    let pendingSeekSec = null;
+
+    function esc(s) {{
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }}
+
+    function fmtTime(sec) {{
+      sec = Math.max(0, Math.floor(sec || 0));
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      return `${{String(h).padStart(2,'0')}}:${{String(m).padStart(2,'0')}}:${{String(s).padStart(2,'0')}}`;
+    }}
+
+    function playAt(epId, startSec, customLabel) {{
+      const ep = EPISODES.find(e => e.id === epId);
+      if (!ep) return;
+      const targetSec = Math.max(0, Number(startSec) || 0);
+      const sameEp = activeEp && activeEp.id === ep.id && audioEl.src === ep.audio;
+      activeEp = ep;
+      playerBar.classList.add('visible');
+      pTime.textContent = `${{fmtTime(targetSec)}} / ${{ep.duration}} · ladataan…`;
+      updatePlayerChapter(targetSec, customLabel);
+
+      if (sameEp && audioEl.readyState >= 1) {{
+        try {{ audioEl.currentTime = targetSec; }} catch(e) {{}}
+        audioEl.playbackRate = SPEEDS[speedIdx];
+        audioEl.play().catch(() => {{}});
+      }} else {{
+        pendingSeekSec = targetSec;
+        audioEl.src = ep.audio;
+        audioEl.load();
+        audioEl.play().catch(() => {{}});
+      }}
+
+      if ('mediaSession' in navigator) {{
+        try {{
+          navigator.mediaSession.metadata = new MediaMetadata({{
+            title: customLabel || ep.label,
+            artist: 'Rane Raitsikka ja Tokela',
+            album: `${{ep.label}} (${{ep.date}})`,
+            artwork: [{{ src: 'cover.jpg', sizes: '512x512', type: 'image/jpeg' }}]
+          }});
+          navigator.mediaSession.setActionHandler('previoustrack', () => jumpChapter(-1));
+          navigator.mediaSession.setActionHandler('nexttrack', () => jumpChapter(1));
+          navigator.mediaSession.setActionHandler('seekbackward', () => skipSeconds(-15));
+          navigator.mediaSession.setActionHandler('seekforward', () => skipSeconds(30));
+        }} catch(e) {{}}
+      }}
+    }}
+
+    function updatePlayerChapter(curSec, overrideTitle) {{
+      if (!activeEp) return;
+      const nonAds = activeEp.chapters.filter(c => c.kind !== 'ad');
+      let foundIdx = 0;
+      for (let i = 0; i < nonAds.length; i++) {{
+        if (nonAds[i].t <= curSec + 2) foundIdx = i;
+      }}
+      activeChapterIdx = foundIdx;
+      const ch = nonAds[foundIdx];
+      pEp.textContent = `${{activeEp.label}} (${{activeEp.date}})`;
+      pTitle.textContent = overrideTitle || (ch ? ch.title : activeEp.label);
+      highlightPlayingRow();
+    }}
+
+    function highlightPlayingRow() {{
+      document.querySelectorAll('.is-playing').forEach(el => el.classList.remove('is-playing'));
+      if (!activeEp) return;
+      const nonAds = activeEp.chapters.filter(c => c.kind !== 'ad');
+      const ch = nonAds[activeChapterIdx];
+      if (ch) {{
+        document.querySelectorAll(`[data-play-ep="${{activeEp.id}}"][data-play-sec="${{ch.t}}"]`).forEach(el => el.classList.add('is-playing'));
+      }}
+    }}
+
+    function jumpChapter(delta) {{
+      if (!activeEp) return;
+      const nonAds = activeEp.chapters.filter(c => c.kind !== 'ad');
+      const next = Math.max(0, Math.min(nonAds.length - 1, activeChapterIdx + delta));
+      const ch = nonAds[next];
+      if (ch) playAt(activeEp.id, ch.t, ch.title);
+    }}
+
+    function skipSeconds(delta) {{
+      if (!activeEp) return;
+      audioEl.currentTime = Math.max(0, (audioEl.currentTime || 0) + delta);
+    }}
+
+    function playRandomStory() {{
+      if (!ALL_HIGHLIGHTS.length) return;
+      const pick = ALL_HIGHLIGHTS[Math.floor(Math.random() * ALL_HIGHLIGHTS.length)];
+      playAt(pick.epId, pick.t, pick.title);
+    }}
+
+    audioEl.addEventListener('loadedmetadata', () => {{
+      if (pendingSeekSec !== null) {{
+        const s = pendingSeekSec;
+        pendingSeekSec = null;
+        try {{ audioEl.currentTime = s; }} catch(e) {{}}
+        audioEl.playbackRate = SPEEDS[speedIdx];
+        audioEl.play().catch(() => {{}});
       }}
     }});
-
-    const searchInput = document.getElementById('searchInput');
-    const cards = Array.from(document.querySelectorAll('.ep-card'));
-    const sections = Array.from(document.querySelectorAll('.season-section'));
-
-    searchInput.addEventListener('input', () => {{
-      const q = searchInput.value.trim().toLowerCase();
-      for (const card of cards) {{
-        const match = !q || card.dataset.search.includes(q);
-        card.classList.toggle('hidden', !match);
-        const det = card.querySelector('details');
-        if (det) {{
-          if (q && match) {{
-            det.open = true;
-            for (const row of card.querySelectorAll('.ch-row')) {{
-              row.classList.toggle('hidden', !row.textContent.toLowerCase().includes(q));
-            }}
-          }} else {{
-            det.open = false;
-            for (const row of card.querySelectorAll('.ch-row')) {{
-              row.classList.remove('hidden');
-            }}
-          }}
+    audioEl.addEventListener('waiting', () => {{
+      if (activeEp) pTime.textContent = `${{fmtTime(audioEl.currentTime)}} / ${{activeEp.duration}} · puskuroi…`;
+    }});
+    audioEl.addEventListener('play', () => {{ pPlayBtn.textContent = '❚❚'; }});
+    audioEl.addEventListener('pause', () => {{ pPlayBtn.textContent = '▶'; }});
+    audioEl.addEventListener('timeupdate', () => {{
+      const cur = audioEl.currentTime || 0;
+      const dur = audioEl.duration || 0;
+      pTime.textContent = `${{fmtTime(cur)}} / ${{activeEp ? activeEp.duration : fmtTime(dur)}}`;
+      if (dur > 0) pProgress.value = Math.round((cur / dur) * 1000);
+      if (activeEp) {{
+        const nonAds = activeEp.chapters.filter(c => c.kind !== 'ad');
+        let idx = 0;
+        for (let i = 0; i < nonAds.length; i++) {{
+          if (nonAds[i].t <= cur + 1) idx = i;
+        }}
+        if (idx !== activeChapterIdx) {{
+          activeChapterIdx = idx;
+          if (nonAds[idx]) pTitle.textContent = nonAds[idx].title;
+          highlightPlayingRow();
         }}
       }}
-      for (const sec of sections) {{
-        const anyVisible = sec.querySelector('.ep-card:not(.hidden)') !== null;
-        sec.classList.toggle('hidden', !anyVisible);
+    }});
+
+    pPlayBtn.addEventListener('click', () => {{
+      if (audioEl.paused) audioEl.play().catch(() => {{}});
+      else audioEl.pause();
+    }});
+    pProgress.addEventListener('input', () => {{
+      if (audioEl.duration) audioEl.currentTime = (pProgress.value / 1000) * audioEl.duration;
+    }});
+    document.getElementById('pPrevBtn').addEventListener('click', () => jumpChapter(-1));
+    document.getElementById('pNextBtn').addEventListener('click', () => jumpChapter(1));
+    document.getElementById('pBack15').addEventListener('click', () => skipSeconds(-15));
+    document.getElementById('pFwd30').addEventListener('click', () => skipSeconds(30));
+    pSpeedBtn.addEventListener('click', () => {{
+      speedIdx = (speedIdx + 1) % SPEEDS.length;
+      audioEl.playbackRate = SPEEDS[speedIdx];
+      pSpeedBtn.textContent = `${{SPEEDS[speedIdx]}}×`;
+    }});
+    document.getElementById('pReroll').addEventListener('click', playRandomStory);
+    document.getElementById('pMeta').addEventListener('click', () => {{
+      if (activeEp) openDrawer(activeEp.id);
+    }});
+    document.getElementById('pCloseBtn').addEventListener('click', () => {{
+      audioEl.pause();
+      playerBar.classList.remove('visible');
+    }});
+
+    const subBtn = document.getElementById('subBtn');
+    const subPop = document.getElementById('subPop');
+    const copyRssBtn = document.getElementById('copyRssBtn');
+    subBtn.addEventListener('click', (e) => {{
+      e.stopPropagation();
+      const open = subPop.classList.toggle('open');
+      subBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }});
+    document.addEventListener('click', (e) => {{
+      if (!subPop.contains(e.target) && e.target !== subBtn) {{
+        subPop.classList.remove('open');
+        subBtn.setAttribute('aria-expanded', 'false');
       }}
     }});
+    copyRssBtn.addEventListener('click', async () => {{
+      try {{
+        await navigator.clipboard.writeText(SUBSCRIBE.rss);
+        copyRssBtn.textContent = 'RSS-osoite kopioitu!';
+        setTimeout(() => copyRssBtn.textContent = 'Kopioi RSS-osoite', 1800);
+      }} catch {{
+        prompt('Kopioi RSS-osoite:', SUBSCRIBE.rss);
+      }}
+    }});
+
+    function renderList() {{
+      const q = currentQuery.trim().toLowerCase();
+      quickPicks.style.display = q ? 'none' : 'flex';
+      const filtered = EPISODES.filter(ep => currentSeason === 'all' || String(ep.season) === currentSeason);
+      const bySeason = new Map();
+
+      for (const ep of filtered) {{
+        let hits = [];
+        if (q) {{
+          const descMatch = ep.desc.toLowerCase().includes(q) || ep.label.toLowerCase().includes(q) || ep.date.includes(q);
+          for (const ch of ep.chapters) {{
+            if (ch.kind !== 'ad' && ch.title.toLowerCase().includes(q)) {{
+              hits.push({{ ts: ch.ts, t: ch.t, title: ch.title }});
+            }}
+          }}
+          for (const hl of ep.highlights) {{
+            if ((hl.title.toLowerCase().includes(q) || hl.body.toLowerCase().includes(q)) && !hits.some(h => h.t === hl.t)) {{
+              hits.push({{ ts: hl.ts, t: hl.t, title: hl.title }});
+            }}
+          }}
+          if (!descMatch && hits.length === 0) continue;
+        }}
+        if (!bySeason.has(ep.season)) bySeason.set(ep.season, []);
+        bySeason.get(ep.season).push({{ ep, hits }});
+      }}
+
+      if (bySeason.size === 0) {{
+        listEl.innerHTML = '<p style="margin-top:32px;color:var(--muted);">Ei osumia haulle.</p>';
+        return;
+      }}
+
+      let out = '';
+      for (const [s, items] of bySeason.entries()) {{
+        out += `<h2 class="season-heading">${{esc(SEASON_LABELS[s])}}</h2>`;
+        for (const {{ ep, hits }} of items) {{
+          const top2 = ep.highlights.slice(0, 2);
+          const hlHtml = q && hits.length
+            ? `<ul class="search-hits">${{hits.slice(0, 5).map(h => `<li><button class="hit-btn" type="button" data-play-ep="${{ep.id}}" data-play-sec="${{h.t}}"><span class="hl-ts">${{h.ts}}</span><span>${{esc(h.title)}}</span></button></li>`).join('')}}</ul>`
+            : `<ul class="ep-highlights">${{top2.map(h => `<li><button class="hl-btn" type="button" data-play-ep="${{ep.id}}" data-play-sec="${{h.t}}"><span class="hl-ts">${{h.ts}}</span><span>${{esc(h.title)}}</span></button></li>`).join('')}}</ul>`;
+          out += `
+            <article class="ep-row">
+              <button class="ep-play" type="button" data-play-ep="${{ep.id}}" data-play-sec="0" title="Kuuntele jakso">▶</button>
+              <div>
+                <div class="ep-meta"><strong>${{esc(ep.label)}}</strong>${{esc(ep.date)}} · ${{esc(ep.duration)}}</div>
+                <p class="ep-desc">${{esc(ep.desc)}}</p>
+                ${{hlHtml}}
+              </div>
+              <button class="ep-setlist-btn ${{openDrawerEpId === ep.id ? 'active' : ''}}" type="button" data-open-drawer="${{ep.id}}">Settilista</button>
+            </article>
+          `;
+        }}
+      }}
+      listEl.innerHTML = out;
+    }}
+
+    function openDrawer(epId, pushState = true) {{
+      const ep = EPISODES.find(e => e.id === epId);
+      if (!ep) return;
+      openDrawerEpId = ep.id;
+      drawerTitle.textContent = ep.label;
+      drawerSub.textContent = `${{ep.date}} · ${{ep.duration}}`;
+      renderDrawerBody(ep);
+      drawer.classList.add('open');
+      drawerBackdrop.classList.add('open');
+      document.querySelectorAll('.ep-setlist-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.openDrawer) === epId));
+      if (pushState && history.pushState) {{
+        history.pushState({{ epId }}, '', '#ep-' + ep.key);
+      }}
+    }}
+
+    function renderDrawerBody(ep) {{
+      const nonAds = ep.chapters.filter(c => c.kind !== 'ad');
+      const visibleChs = nonAds.filter(c => drawerFilter === 'all' || c.kind === drawerFilter);
+      const hlsHtml = ep.highlights.map(h => `
+        <div class="hl-card">
+          <button type="button" data-play-ep="${{ep.id}}" data-play-sec="${{h.t}}"><span class="hl-ts">${{h.ts}}</span> ${{esc(h.title)}}</button>
+          <p>${{esc(h.body)}}</p>
+        </div>
+      `).join('');
+      const chsHtml = visibleChs.map(c => `
+        <button class="ch-item ch-${{c.kind}}" type="button" data-play-ep="${{ep.id}}" data-play-sec="${{c.t}}">
+          <span class="ch-ts">${{c.ts}}</span>
+          <span class="ch-label">${{c.kind === 'music' ? '♪ ' : ''}}${{esc(c.title.replace(/^(Intro ja )?Musiikki:\\s*/i, ''))}}</span>
+        </button>
+      `).join('');
+      const vttLink = ep.vttRel ? `<a href="${{ep.vttRel}}" target="_blank" rel="noopener">Tekstitys (.vtt)</a>` : '';
+      drawerBody.innerHTML = `
+        <p class="drawer-desc">${{esc(ep.desc)}}</p>
+        <div class="drawer-actions">
+          <button class="btn-primary" type="button" data-play-ep="${{ep.id}}" data-play-sec="0">▶ Kuuntele alusta</button>
+          <div class="drawer-meta-links">
+            <a href="${{ep.audio}}" target="_blank" rel="noopener">MP3</a>
+            ${{vttLink}}
+            <a href="${{ep.chaptersRel}}" target="_blank" rel="noopener">Chapters JSON</a>
+          </div>
+        </div>
+        <div class="drawer-section-label">
+          <span>Settilista (${{visibleChs.length}})</span>
+          <div class="filter-inline">
+            <button type="button" data-dfilter="all" class="${{drawerFilter==='all'?'active':''}}">Kaikki</button>
+            <button type="button" data-dfilter="music" class="${{drawerFilter==='music'?'active':''}}">Biisit</button>
+            <button type="button" data-dfilter="talk" class="${{drawerFilter==='talk'?'active':''}}">Puheet</button>
+          </div>
+        </div>
+        <div>${{chsHtml}}</div>
+        ${{ep.highlights.length ? `<div class="drawer-section-label"><span>Jakson parhaat nostot</span></div><div>${{hlsHtml}}</div>` : ''}}
+      `;
+      highlightPlayingRow();
+    }}
+
+    function closeDrawer() {{
+      openDrawerEpId = null;
+      drawer.classList.remove('open');
+      drawerBackdrop.classList.remove('open');
+      document.querySelectorAll('.ep-setlist-btn.active').forEach(b => b.classList.remove('active'));
+    }}
+
+    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+    drawerBackdrop.addEventListener('click', closeDrawer);
+    window.addEventListener('popstate', () => {{ if (openDrawerEpId) closeDrawer(); }});
+    document.addEventListener('keydown', (e) => {{
+      if (e.key === 'Escape') {{
+        closeDrawer();
+        subPop.classList.remove('open');
+        subBtn.setAttribute('aria-expanded', 'false');
+      }}
+    }});
+
+    document.addEventListener('click', (e) => {{
+      const playEl = e.target.closest('[data-play-ep]');
+      if (playEl) {{
+        playAt(Number(playEl.dataset.playEp), Number(playEl.dataset.playSec || 0));
+        return;
+      }}
+      const drawerBtn = e.target.closest('[data-open-drawer]');
+      if (drawerBtn) {{
+        openDrawer(Number(drawerBtn.dataset.openDrawer));
+        return;
+      }}
+      const dFilter = e.target.closest('[data-dfilter]');
+      if (dFilter && openDrawerEpId) {{
+        drawerFilter = dFilter.dataset.dfilter;
+        const ep = EPISODES.find(x => x.id === openDrawerEpId);
+        if (ep) renderDrawerBody(ep);
+        return;
+      }}
+      const qBtn = e.target.closest('[data-q]');
+      if (qBtn) {{
+        searchInput.value = qBtn.dataset.q;
+        currentQuery = qBtn.dataset.q;
+        renderList();
+      }}
+    }});
+
+    document.querySelectorAll('.s-tab').forEach(btn => {{
+      btn.addEventListener('click', () => {{
+        document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSeason = btn.dataset.season;
+        renderList();
+      }});
+    }});
+    searchInput.addEventListener('input', () => {{
+      currentQuery = searchInput.value;
+      renderList();
+    }});
+    document.getElementById('randomBtn').addEventListener('click', playRandomStory);
+
+    renderList();
+    if (location.hash && /^#ep-\\d{{2}}$/.test(location.hash)) {{
+      const targetId = parseInt(location.hash.slice(4), 10);
+      if (EPISODES.some(e => e.id === targetId)) openDrawer(targetId, false);
+    }}
   </script>
 </body>
 </html>
@@ -821,6 +1425,7 @@ def main() -> None:
                 "chapters_rel": chapters_rel,
                 "vtt_rel": vtt_rel,
                 "chapters": chapters,
+                "highlights": load_analysis_highlights(global_ep),
             }
         )
 
