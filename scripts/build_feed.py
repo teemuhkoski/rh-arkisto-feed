@@ -349,6 +349,11 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       color: var(--muted);
       font-size: 0.96rem;
     }}
+    .hero p a {{
+      color: var(--accent);
+      text-decoration: none;
+    }}
+    .hero p a:hover {{ text-decoration: underline; }}
     .stats {{
       display: flex;
       flex-wrap: wrap;
@@ -559,7 +564,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       {cover_html}
       <div style="flex:1;min-width:0;">
         <h1>Rane Raitsikka ja Tokela – Arkisto</h1>
-        <p>Radio Helsingin ohjelmajaksot (2017–2018) sisällysluettelolla, aikaleimoilla ja siivotuilla tekstityksillä. Ääni suoratoistetaan suoraan Radio Helsingin arkistosta.</p>
+        <p>Radio Helsingin ohjelmajaksot (2017–2018) sisällysluettelolla, aikaleimoilla ja siivotuilla tekstityksillä. Ääni toistetaan suoraan <a href="{SHOW_LINK}" target="_blank" rel="noopener">Radio Helsingin arkistosta</a>. Tämä on radiokanavasta riippumaton harrasteprojekti.</p>
         <div class="stats">
           <span class="stat"><strong>{len(published)} / {total_episodes}</strong> jaksoa julkaistu</span>
           <span class="stat"><strong>{total_hours:.1f} h</strong> kuunneltavaa</span>
