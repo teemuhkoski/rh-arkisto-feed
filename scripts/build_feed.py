@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.utils import format_datetime
 from pathlib import Path
+from urllib.parse import quote
 from xml.sax.saxutils import escape
 from zoneinfo import ZoneInfo
 
@@ -198,8 +199,13 @@ def refresh_all_metadata(episodes: list[dict], metadata_cache: dict[str, dict], 
 
 def build_index_html(published: list[dict], total_episodes: int, has_cover: bool) -> str:
     feed_url = f"{BASE_URL}/feed.xml"
-    apple_url = feed_url.replace("https://", "podcast://")
-    pocketcasts_url = f"pktc://subscribe/{feed_url.replace('https://', '')}"
+    feed_no_scheme = feed_url.replace("https://", "")
+    feed_encoded = quote(feed_url, safe="")
+    apple_url = f"podcast://{feed_no_scheme}"
+    pocketcasts_url = f"pktc://subscribe/{feed_no_scheme}"
+    overcast_url = f"overcast://x-callback-url/add?url={feed_encoded}"
+    antennapod_url = f"https://antennapod.org/deeplink/subscribe?url={feed_encoded}"
+    podcastaddict_url = f"podcastaddict://{feed_no_scheme}"
 
     total_sec = sum(parse_hms_to_seconds(ep["duration"]) for ep in published)
     total_hours = total_sec / 3600.0
@@ -416,6 +422,11 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       overflow: hidden;
       text-overflow: ellipsis;
     }}
+    .rss-hint {{
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }}
     .search-box {{
       margin-bottom: 24px;
       position: sticky;
@@ -575,11 +586,15 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
           <button class="btn btn-primary" id="copyBtn" type="button">Kopioi RSS-osoite</button>
           <a class="btn" href="{html_lib.escape(apple_url)}">Apple Podcasts</a>
           <a class="btn" href="{html_lib.escape(pocketcasts_url)}">Pocket Casts</a>
+          <a class="btn" href="{html_lib.escape(overcast_url)}">Overcast</a>
+          <a class="btn" href="{html_lib.escape(antennapod_url)}" target="_blank" rel="noopener">AntennaPod</a>
+          <a class="btn" href="{html_lib.escape(podcastaddict_url)}">Podcast Addict</a>
           <a class="btn" href="feed.xml">Avaa feed.xml</a>
         </div>
         <div class="rss-bar">
           <input class="rss-url" id="rssUrl" type="text" readonly value="{html_lib.escape(feed_url)}" />
         </div>
+        <div class="rss-hint">RSS-osoitteen voi liittää myös esim. YouTube Musiciin (Kirjasto → Podcastit → Lisää RSS-syötteen avulla) tai Castroon. Spotify ei tue suoria RSS-syötteitä.</div>
       </div>
     </header>
 

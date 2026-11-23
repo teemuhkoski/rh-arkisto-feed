@@ -126,6 +126,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .rss-hint {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
     .search-box {
       margin-bottom: 24px;
       position: sticky;
@@ -285,11 +290,15 @@
           <button class="btn btn-primary" id="copyBtn" type="button">Kopioi RSS-osoite</button>
           <a class="btn" href="podcast://teemuhkoski.github.io/rh-arkisto-feed/feed.xml">Apple Podcasts</a>
           <a class="btn" href="pktc://subscribe/teemuhkoski.github.io/rh-arkisto-feed/feed.xml">Pocket Casts</a>
+          <a class="btn" href="overcast://x-callback-url/add?url=https%3A%2F%2Fteemuhkoski.github.io%2Frh-arkisto-feed%2Ffeed.xml">Overcast</a>
+          <a class="btn" href="https://antennapod.org/deeplink/subscribe?url=https%3A%2F%2Fteemuhkoski.github.io%2Frh-arkisto-feed%2Ffeed.xml" target="_blank" rel="noopener">AntennaPod</a>
+          <a class="btn" href="podcastaddict://teemuhkoski.github.io/rh-arkisto-feed/feed.xml">Podcast Addict</a>
           <a class="btn" href="feed.xml">Avaa feed.xml</a>
         </div>
         <div class="rss-bar">
           <input class="rss-url" id="rssUrl" type="text" readonly value="https://teemuhkoski.github.io/rh-arkisto-feed/feed.xml" />
         </div>
+        <div class="rss-hint">RSS-osoitteen voi liittää myös esim. YouTube Musiciin (Kirjasto → Podcastit → Lisää RSS-syötteen avulla) tai Castroon. Spotify ei tue suoria RSS-syötteitä.</div>
       </div>
     </header>
 
