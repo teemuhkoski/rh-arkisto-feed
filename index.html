@@ -221,18 +221,19 @@
     .ep-play {
       width: 34px;
       height: 34px;
+      padding: 0;
       border-radius: 50%;
       border: 1px solid var(--ink);
       background: transparent;
       color: var(--ink);
-      font-size: 0.78rem;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       margin-top: 2px;
-      padding-left: 2px;
     }
+    .ep-play svg, .p-play svg { display: block; fill: currentColor; }
+    .icon-play { transform: translateX(1px); }
     .ep-play:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
     .ep-meta {
       font-size: 0.8rem;
@@ -453,8 +454,9 @@
       gap: 12px;
     }
     .p-play {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: #F6F3EC; color: #141413; border: none; cursor: pointer; font-size: 0.8rem; flex-shrink: 0;
+      width: 34px; height: 34px; padding: 0; border-radius: 50%;
+      background: #F6F3EC; color: #141413; border: none; cursor: pointer; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
     }
     .p-meta { flex: 1; min-width: 0; cursor: pointer; }
     .p-ep { font-size: 0.72rem; color: #A6A298; }
@@ -550,7 +552,7 @@
   <div class="player-bar" id="playerBar" role="region" aria-label="Äänisoitin">
     <audio id="globalAudio" preload="none"></audio>
     <div class="player-inner">
-      <button class="p-play" id="pPlayBtn" type="button" aria-label="Toista tai tauota">▶</button>
+      <button class="p-play" id="pPlayBtn" type="button" aria-label="Toista tai tauota"><svg class="icon-play" width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><path d="M1 1l9 5-9 5z"/></svg></button>
       <div class="p-meta" id="pMeta" title="Avaa soivan jakson settilista">
         <div class="p-ep" id="pEp"></div>
         <div class="p-title" id="pTitle"></div>
@@ -707,8 +709,10 @@
     audioEl.addEventListener('waiting', () => {
       if (activeEp) pTime.textContent = `${fmtTime(audioEl.currentTime)} / ${activeEp.duration} · puskuroi…`;
     });
-    audioEl.addEventListener('play', () => { pPlayBtn.textContent = '❚❚'; });
-    audioEl.addEventListener('pause', () => { pPlayBtn.textContent = '▶'; });
+    const ICON_PLAY = '<svg class="icon-play" width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><path d="M1 1l9 5-9 5z"/></svg>';
+    const ICON_PAUSE = '<svg width="10" height="12" viewBox="0 0 10 12" aria-hidden="true"><rect x="1" y="1" width="3" height="10"/><rect x="6" y="1" width="3" height="10"/></svg>';
+    audioEl.addEventListener('play', () => { pPlayBtn.innerHTML = ICON_PAUSE; });
+    audioEl.addEventListener('pause', () => { pPlayBtn.innerHTML = ICON_PLAY; });
     audioEl.addEventListener('timeupdate', () => {
       const cur = audioEl.currentTime || 0;
       const dur = audioEl.duration || 0;
@@ -818,7 +822,7 @@
             : `<ul class="ep-highlights">${top2.map(h => `<li><button class="hl-btn" type="button" data-play-ep="${ep.id}" data-play-sec="${h.t}"><span class="hl-ts">${h.ts}</span><span>${esc(h.title)}</span></button></li>`).join('')}</ul>`;
           out += `
             <article class="ep-row">
-              <button class="ep-play" type="button" data-play-ep="${ep.id}" data-play-sec="0" title="Kuuntele jakso">▶</button>
+              <button class="ep-play" type="button" data-play-ep="${ep.id}" data-play-sec="0" title="Kuuntele jakso" aria-label="Kuuntele jakso">${ICON_PLAY}</button>
               <div>
                 <div class="ep-meta"><strong>${esc(ep.label)}</strong>${esc(ep.date)} · ${esc(ep.duration)}</div>
                 <p class="ep-desc">${esc(ep.desc)}</p>
