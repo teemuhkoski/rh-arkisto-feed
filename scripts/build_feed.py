@@ -483,6 +483,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       font-weight: 600;
       color: var(--muted);
       cursor: pointer;
+      white-space: nowrap;
     }}
     .s-tab:hover {{ color: var(--ink); }}
     .s-tab.active {{ color: var(--accent); border-bottom-color: var(--accent); }}
@@ -822,9 +823,9 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         <input class="search-input" id="searchInput" type="search" placeholder="Hae biisiä, bändiä, paikkaa tai tarinaa..." />
         <div class="season-tabs" role="tablist">
           <button class="s-tab active" data-season="all" type="button">Kaikki</button>
-          <button class="s-tab" data-season="1" type="button">K1</button>
-          <button class="s-tab" data-season="2" type="button">K2</button>
-          <button class="s-tab" data-season="3" type="button">K3</button>
+          <button class="s-tab" data-season="1" type="button">Kausi 1</button>
+          <button class="s-tab" data-season="2" type="button">Kausi 2</button>
+          <button class="s-tab" data-season="3" type="button">Kausi 3</button>
         </div>
       </div>
       <div class="quick-picks" id="quickPicks">
