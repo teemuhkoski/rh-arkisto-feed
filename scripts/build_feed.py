@@ -310,7 +310,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Rane Raitsikka ja Tokela – Podcast-arkisto</title>
   <meta name="description" content="Radio Helsingin Rane Raitsikka ja Tokela -ohjelman jaksoarkisto (2017–2018) sisällysluettelolla, aikaleimoilla ja äänisoittimella." />
   <style>
@@ -325,19 +325,29 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       --accent-soft: rgba(11, 93, 99, 0.08);
     }}
     * {{ box-sizing: border-box; }}
-    html {{ background: var(--bg); color: var(--ink); }}
+    html {{
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: clip;
+      overscroll-behavior-x: none;
+      max-width: 100%;
+    }}
     body {{
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Inter, sans-serif;
       line-height: 1.55;
       -webkit-font-smoothing: antialiased;
-      padding-bottom: 96px;
+      overflow-x: clip;
+      overscroll-behavior-x: none;
+      max-width: 100%;
+      padding-bottom: calc(124px + env(safe-area-inset-bottom, 0px));
     }}
     a {{ color: var(--accent); text-decoration: none; }}
     a:hover {{ text-decoration: underline; }}
     .wrap {{ max-width: 920px; margin: 0 auto; padding: 28px 24px 72px; }}
 
     .masthead {{
+      position: relative;
       display: flex;
       gap: 24px;
       align-items: center;
@@ -460,20 +470,54 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       align-items: center;
       flex-wrap: wrap;
     }}
-    .search-input {{
+    .search-field {{
+      position: relative;
       flex: 1;
       min-width: 220px;
+      display: flex;
+      align-items: center;
+    }}
+    .search-input {{
+      width: 100%;
+      min-width: 0;
       background: transparent;
       border: none;
+      border-radius: 0;
       border-bottom: 1px solid var(--ink);
-      padding: 7px 2px;
-      font-size: 0.96rem;
+      padding: 8px 44px 8px 2px;
+      font-size: 1rem;
       color: var(--ink);
       outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }}
+    .search-input::-webkit-search-cancel-button,
+    .search-input::-webkit-search-decoration {{
+      -webkit-appearance: none;
+      appearance: none;
     }}
     .search-input::placeholder {{ color: #7C786E; }}
-    .search-input:focus {{ border-bottom: 2px solid var(--accent); padding-bottom: 6px; }}
-    .season-tabs {{ display: flex; gap: 4px; }}
+    .search-input:focus {{ border-bottom: 2px solid var(--accent); padding-bottom: 7px; }}
+    .search-clear {{
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }}
+    .search-clear[hidden] {{ display: none; }}
+    .season-tabs {{ display: flex; gap: 4px; flex-wrap: wrap; }}
     .s-tab {{
       background: none;
       border: none;
@@ -543,16 +587,32 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     }}
     .ep-play svg, .p-play svg {{ display: block; fill: currentColor; }}
     .icon-play {{ transform: translateX(1px); }}
-    .ep-play:hover {{ background: var(--accent); border-color: var(--accent); color: #fff; }}
+    .ep-content {{ min-width: 0; overflow-wrap: break-word; }}
+    .ep-summary-btn {{
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0 0 10px;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: rgba(11, 93, 99, 0.12);
+    }}
+    .ep-summary-btn:active {{ opacity: 0.72; }}
+    .ep-summary-btn:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 4px; }}
     .ep-meta {{
+      display: block;
       font-size: 0.8rem;
       color: var(--muted);
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       margin-bottom: 3px;
     }}
-    .ep-meta strong {{ color: var(--ink); font-family: inherit; font-weight: 700; margin-right: 8px; }}
+    .ep-meta strong {{ color: var(--ink); font-family: inherit; font-weight: 700; margin-right: 8px; transition: color 0.12s ease; }}
     .ep-desc {{
-      margin: 0 0 10px;
+      margin: 0;
       font-size: 0.94rem;
       color: var(--ink);
       display: -webkit-box;
@@ -580,7 +640,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       gap: 8px;
       align-items: baseline;
     }}
-    .hl-btn:hover {{ color: var(--accent); }}
     .hl-ts {{
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.78rem;
@@ -598,7 +657,14 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       white-space: nowrap;
       margin-top: 2px;
     }}
-    .ep-setlist-btn:hover, .ep-setlist-btn.active {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
+    .ep-setlist-btn.active {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
+    @media (hover: hover) {{
+      .ep-play:hover {{ background: var(--accent); border-color: var(--accent); color: #fff; }}
+      .ep-summary-btn:hover .ep-meta strong {{ color: var(--accent); }}
+      .hl-btn:hover {{ color: var(--accent); }}
+      .ep-setlist-btn:hover {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
+      .search-clear:hover {{ color: var(--ink); }}
+    }}
 
     .search-hits {{ margin-top: 10px; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }}
     .hit-btn {{
@@ -629,16 +695,23 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       top: 0;
       right: 0;
       bottom: 0;
-      width: min(520px, 100vw);
+      width: min(520px, 100%);
       background: var(--bg);
       border-left: 1px solid var(--ink);
       z-index: 70;
       transform: translateX(100%);
-      transition: transform 0.2s ease;
+      visibility: hidden;
+      pointer-events: none;
+      transition: transform 0.2s ease, visibility 0s linear 0.2s;
       display: flex;
       flex-direction: column;
     }}
-    .drawer.open {{ transform: translateX(0); }}
+    .drawer.open {{
+      transform: translateX(0);
+      visibility: visible;
+      pointer-events: auto;
+      transition: transform 0.2s ease, visibility 0s;
+    }}
     .drawer-head {{
       padding: 18px 22px 14px;
       border-bottom: 1px solid var(--line);
@@ -660,7 +733,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     .drawer-close:hover {{ border-color: var(--ink); }}
     .drawer-body {{
       overflow-y: auto;
-      padding: 18px 22px 110px;
+      padding: 18px 22px calc(124px + env(safe-area-inset-bottom, 0px));
       flex: 1;
     }}
     .drawer-desc {{ margin: 0 0 16px; font-size: 0.92rem; color: var(--ink); }}
@@ -671,9 +744,24 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       gap: 12px;
       align-items: center;
     }}
+    .drawer-files {{
+      margin-top: 24px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }}
+    .drawer-files summary {{
+      cursor: pointer;
+      color: var(--muted);
+      user-select: none;
+    }}
+    .drawer-files summary:hover {{ color: var(--ink); }}
     .drawer-meta-links {{
+      margin-top: 10px;
       display: flex;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 8px 16px;
       font-size: 0.78rem;
       color: var(--muted);
     }}
@@ -750,14 +838,75 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       color: #F6F3EC;
       z-index: 90;
       transform: translateY(110%);
-      transition: transform 0.2s ease;
+      visibility: hidden;
+      pointer-events: none;
+      transition: transform 0.2s ease, visibility 0s linear 0.2s;
       border-top: 2px solid var(--accent);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }}
-    .player-bar.visible {{ transform: translateY(0); }}
+    .player-bar.visible {{
+      transform: translateY(0);
+      visibility: visible;
+      pointer-events: auto;
+      transition: transform 0.2s ease, visibility 0s;
+    }}
+    .p-progress-wrap {{
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 4px 18px 0;
+    }}
+    .p-progress {{
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 28px;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+      display: block;
+      touch-action: none;
+      --pct: 0%;
+    }}
+    .p-progress::-webkit-slider-runnable-track {{
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(to right, var(--accent) var(--pct), #3A3934 var(--pct));
+    }}
+    .p-progress::-webkit-slider-thumb {{
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #F6F3EC;
+      border: 2px solid var(--accent);
+      margin-top: -5px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }}
+    .p-progress::-moz-range-track {{
+      height: 4px;
+      border-radius: 2px;
+      background: #3A3934;
+    }}
+    .p-progress::-moz-range-progress {{
+      height: 4px;
+      border-radius: 2px;
+      background: var(--accent);
+    }}
+    .p-progress::-moz-range-thumb {{
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #F6F3EC;
+      border: 2px solid var(--accent);
+      box-sizing: border-box;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }}
     .player-inner {{
       max-width: 960px;
       margin: 0 auto;
-      padding: 10px 18px 6px;
+      padding: 2px 18px 10px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -777,14 +926,19 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     }}
     .p-btn:hover, .p-close:hover {{ border-color: #F6F3EC; }}
     .p-time {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; color: #A6A298; white-space: nowrap; }}
-    .p-progress {{ width: 100%; display: block; accent-color: #0B5D63; margin: 0; height: 4px; cursor: pointer; }}
 
     @media (max-width: 640px) {{
       .wrap {{ padding: 18px 16px 88px; }}
       .masthead {{ gap: 16px; align-items: flex-start; }}
       .cover {{ width: 84px; height: 84px; }}
+      .sub-wrap {{ position: static; }}
+      .sub-pop {{ left: 0; right: 0; width: auto; top: calc(100% - 16px); }}
+      .search-field {{ flex: 1 1 100%; min-width: 0; }}
       .ep-row {{ grid-template-columns: 34px 1fr; }}
       .ep-setlist-btn {{ grid-column: 2; justify-self: start; margin-top: 8px; }}
+      .drawer {{ border-left: none; }}
+      .p-progress-wrap {{ padding: 4px 12px 0; }}
+      .player-inner {{ padding: 2px 12px 10px; gap: 8px; }}
       .p-time, #pSpeedBtn, #pReroll {{ display: none; }}
     }}
   </style>
@@ -820,7 +974,10 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
 
     <div class="toolbar">
       <div class="toolbar-row">
-        <input class="search-input" id="searchInput" type="search" placeholder="Hae biisiä, bändiä, paikkaa tai tarinaa..." />
+        <div class="search-field">
+          <input class="search-input" id="searchInput" type="search" placeholder="Hae biisiä, bändiä, paikkaa tai tarinaa..." autocomplete="off" autocorrect="off" spellcheck="false" />
+          <button class="search-clear" id="searchClear" type="button" aria-label="Tyhjennä haku" hidden>✕</button>
+        </div>
         <div class="season-tabs" role="tablist">
           <button class="s-tab active" data-season="all" type="button">Kaikki</button>
           <button class="s-tab" data-season="1" type="button">Kausi 1</button>
@@ -847,7 +1004,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
   </div>
 
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
-  <aside class="drawer" id="drawer" aria-label="Jakson settilista">
+  <aside class="drawer" id="drawer" aria-label="Jakson sisältö">
     <div class="drawer-head">
       <div>
         <h2 class="drawer-title" id="drawerTitle"></h2>
@@ -860,9 +1017,12 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
 
   <div class="player-bar" id="playerBar" role="region" aria-label="Äänisoitin">
     <audio id="globalAudio" preload="none"></audio>
+    <div class="p-progress-wrap">
+      <input class="p-progress" id="pProgress" type="range" min="0" max="1000" value="0" aria-label="Toistokohta" />
+    </div>
     <div class="player-inner">
       <button class="p-play" id="pPlayBtn" type="button" aria-label="Toista tai tauota"><svg class="icon-play" width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><path d="M1 1l9 5-9 5z"/></svg></button>
-      <div class="p-meta" id="pMeta" title="Avaa soivan jakson settilista">
+      <div class="p-meta" id="pMeta" title="Avaa soivan jakson biisit ja aiheet">
         <div class="p-ep" id="pEp"></div>
         <div class="p-title" id="pTitle"></div>
       </div>
@@ -877,7 +1037,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       <div class="p-time" id="pTime">00:00:00</div>
       <button class="p-close" id="pCloseBtn" type="button" aria-label="Sulje soitin">✕</button>
     </div>
-    <input class="p-progress" id="pProgress" type="range" min="0" max="1000" value="0" aria-label="Toistokohta" />
   </div>
 
   <script>
@@ -893,6 +1052,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
 
     const listEl = document.getElementById('episodeList');
     const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
     const quickPicks = document.getElementById('quickPicks');
     const drawer = document.getElementById('drawer');
     const drawerBackdrop = document.getElementById('drawerBackdrop');
@@ -913,6 +1073,17 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     let activeEp = null;
     let activeChapterIdx = -1;
     let pendingSeekSec = null;
+    let isScrubbing = false;
+
+    function setProgressVisual(val) {{
+      const clamped = Math.max(0, Math.min(1000, Math.round(Number(val) || 0)));
+      pProgress.value = clamped;
+      pProgress.style.setProperty('--pct', `${{(clamped / 10).toFixed(1)}}%`);
+    }}
+
+    function syncSearchClear() {{
+      searchClear.hidden = !searchInput.value;
+    }}
 
     function esc(s) {{
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -938,9 +1109,11 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
 
       if (sameEp && audioEl.readyState >= 1) {{
         try {{ audioEl.currentTime = targetSec; }} catch(e) {{}}
+        if (audioEl.duration > 0) setProgressVisual((targetSec / audioEl.duration) * 1000);
         audioEl.playbackRate = SPEEDS[speedIdx];
         audioEl.play().catch(() => {{}});
       }} else {{
+        setProgressVisual(0);
         pendingSeekSec = targetSec;
         audioEl.src = ep.audio;
         audioEl.load();
@@ -1011,6 +1184,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         const s = pendingSeekSec;
         pendingSeekSec = null;
         try {{ audioEl.currentTime = s; }} catch(e) {{}}
+        if (audioEl.duration > 0) setProgressVisual((s / audioEl.duration) * 1000);
         audioEl.playbackRate = SPEEDS[speedIdx];
         audioEl.play().catch(() => {{}});
       }}
@@ -1026,7 +1200,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       const cur = audioEl.currentTime || 0;
       const dur = audioEl.duration || 0;
       pTime.textContent = `${{fmtTime(cur)}} / ${{activeEp ? activeEp.duration : fmtTime(dur)}}`;
-      if (dur > 0) pProgress.value = Math.round((cur / dur) * 1000);
+      if (dur > 0 && !isScrubbing) setProgressVisual((cur / dur) * 1000);
       if (activeEp) {{
         const nonAds = activeEp.chapters.filter(c => c.kind !== 'ad');
         let idx = 0;
@@ -1045,8 +1219,20 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       if (audioEl.paused) audioEl.play().catch(() => {{}});
       else audioEl.pause();
     }});
+    const startScrub = () => {{ isScrubbing = true; }};
+    const endScrub = () => {{ isScrubbing = false; }};
+    pProgress.addEventListener('pointerdown', startScrub);
+    pProgress.addEventListener('touchstart', startScrub, {{ passive: true }});
+    pProgress.addEventListener('mousedown', startScrub);
+    pProgress.addEventListener('pointerup', endScrub);
+    pProgress.addEventListener('pointercancel', endScrub);
+    pProgress.addEventListener('touchend', endScrub);
+    pProgress.addEventListener('mouseup', endScrub);
+    pProgress.addEventListener('change', endScrub);
     pProgress.addEventListener('input', () => {{
-      if (audioEl.duration) audioEl.currentTime = (pProgress.value / 1000) * audioEl.duration;
+      const val = Number(pProgress.value) || 0;
+      pProgress.style.setProperty('--pct', `${{(val / 10).toFixed(1)}}%`);
+      if (audioEl.duration) audioEl.currentTime = (val / 1000) * audioEl.duration;
     }});
     document.getElementById('pPrevBtn').addEventListener('click', () => jumpChapter(-1));
     document.getElementById('pNextBtn').addEventListener('click', () => jumpChapter(1));
@@ -1132,12 +1318,14 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
           out += `
             <article class="ep-row">
               <button class="ep-play" type="button" data-play-ep="${{ep.id}}" data-play-sec="0" title="Kuuntele jakso" aria-label="Kuuntele jakso">${{ICON_PLAY}}</button>
-              <div>
-                <div class="ep-meta"><strong>${{esc(ep.label)}}</strong>${{esc(ep.date)}} · ${{esc(ep.duration)}}</div>
-                <p class="ep-desc">${{esc(ep.desc)}}</p>
+              <div class="ep-content">
+                <button class="ep-summary-btn" type="button" data-open-drawer="${{ep.id}}">
+                  <span class="ep-meta"><strong>${{esc(ep.label)}}</strong>${{esc(ep.date)}} · ${{esc(ep.duration)}}</span>
+                  <span class="ep-desc">${{esc(ep.desc)}}</span>
+                </button>
                 ${{hlHtml}}
               </div>
-              <button class="ep-setlist-btn ${{openDrawerEpId === ep.id ? 'active' : ''}}" type="button" data-open-drawer="${{ep.id}}">Settilista</button>
+              <button class="ep-setlist-btn ${{openDrawerEpId === ep.id ? 'active' : ''}}" type="button" data-open-drawer="${{ep.id}}">Biisit &amp; aiheet ›</button>
             </article>
           `;
         }}
@@ -1180,14 +1368,9 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         <p class="drawer-desc">${{esc(ep.desc)}}</p>
         <div class="drawer-actions">
           <button class="btn-primary" type="button" data-play-ep="${{ep.id}}" data-play-sec="0">▶ Kuuntele alusta</button>
-          <div class="drawer-meta-links">
-            <a href="${{ep.audio}}" target="_blank" rel="noopener">MP3</a>
-            ${{vttLink}}
-            <a href="${{ep.chaptersRel}}" target="_blank" rel="noopener">Chapters JSON</a>
-          </div>
         </div>
         <div class="drawer-section-label">
-          <span>Settilista (${{visibleChs.length}})</span>
+          <span>Biisit &amp; aiheet (${{visibleChs.length}})</span>
           <div class="filter-inline">
             <button type="button" data-dfilter="all" class="${{drawerFilter==='all'?'active':''}}">Kaikki</button>
             <button type="button" data-dfilter="music" class="${{drawerFilter==='music'?'active':''}}">Biisit</button>
@@ -1196,6 +1379,14 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         </div>
         <div>${{chsHtml}}</div>
         ${{ep.highlights.length ? `<div class="drawer-section-label"><span>Jakson parhaat nostot</span></div><div>${{hlsHtml}}</div>` : ''}}
+        <details class="drawer-files">
+          <summary>Tiedostot ja tekninen lähdedata</summary>
+          <div class="drawer-meta-links">
+            <a href="${{ep.audio}}" target="_blank" rel="noopener">Äänitiedosto (MP3)</a>
+            ${{vttLink}}
+            <a href="${{ep.chaptersRel}}" target="_blank" rel="noopener">Luvut (raaka JSON-data)</a>
+          </div>
+        </details>
       `;
       highlightPlayingRow();
     }}
@@ -1240,6 +1431,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       if (qBtn) {{
         searchInput.value = qBtn.dataset.q;
         currentQuery = qBtn.dataset.q;
+        syncSearchClear();
         renderList();
       }}
     }});
@@ -1254,10 +1446,18 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     }});
     searchInput.addEventListener('input', () => {{
       currentQuery = searchInput.value;
+      syncSearchClear();
+      renderList();
+    }});
+    searchClear.addEventListener('click', () => {{
+      searchInput.value = '';
+      currentQuery = '';
+      syncSearchClear();
       renderList();
     }});
     document.getElementById('randomBtn').addEventListener('click', playRandomStory);
 
+    syncSearchClear();
     renderList();
     if (location.hash && /^#ep-\\d{{2}}$/.test(location.hash)) {{
       const targetId = parseInt(location.hash.slice(4), 10);
