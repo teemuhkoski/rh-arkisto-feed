@@ -342,8 +342,8 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       max-width: 100%;
       padding-bottom: calc(124px + env(safe-area-inset-bottom, 0px));
     }}
+    html.drawer-open, body.drawer-open {{ overflow: hidden; }}
     a {{ color: var(--accent); text-decoration: none; }}
-    a:hover {{ text-decoration: underline; }}
     .wrap {{ max-width: 920px; margin: 0 auto; padding: 28px 24px 72px; }}
 
     .masthead {{
@@ -400,7 +400,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       cursor: pointer;
       letter-spacing: 0.01em;
     }}
-    .btn-primary:hover {{ background: var(--accent-hover); }}
     .btn-text {{
       background: none;
       border: none;
@@ -411,7 +410,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       padding: 6px 0;
       border-bottom: 1px solid var(--line);
     }}
-    .btn-text:hover {{ color: var(--accent); border-bottom-color: var(--accent); }}
 
     .sub-pop {{
       display: none;
@@ -436,7 +434,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       cursor: pointer;
       margin-bottom: 10px;
     }}
-    .sub-copy:hover {{ background: var(--accent); }}
     .sub-apps {{
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -452,7 +449,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       font-weight: 500;
       text-align: center;
     }}
-    .sub-apps a:hover {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
     .sub-note {{ font-size: 0.75rem; color: var(--muted); line-height: 1.4; }}
 
     .toolbar {{
@@ -529,7 +525,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       cursor: pointer;
       white-space: nowrap;
     }}
-    .s-tab:hover {{ color: var(--ink); }}
     .s-tab.active {{ color: var(--accent); border-bottom-color: var(--accent); }}
     .quick-picks {{
       margin-top: 8px;
@@ -551,7 +546,53 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       text-decoration-color: var(--line);
       text-underline-offset: 3px;
     }}
-    .quick-picks button:hover {{ color: var(--accent); text-decoration-color: var(--accent); }}
+
+    .resume-bar {{
+      margin-top: 14px;
+      padding: 4px 4px 4px 12px;
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }}
+    .resume-bar[hidden] {{ display: none; }}
+    .resume-btn {{
+      flex: 1;
+      min-width: 0;
+      background: none;
+      border: none;
+      padding: 8px 0;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.86rem;
+      color: var(--ink);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }}
+    .resume-btn strong {{ color: var(--accent); font-weight: 700; }}
+    .resume-ts {{
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }}
+    .resume-dismiss {{
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }}
 
     .season-heading {{
       margin: 34px 0 0;
@@ -658,13 +699,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       margin-top: 2px;
     }}
     .ep-setlist-btn.active {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
-    @media (hover: hover) {{
-      .ep-play:hover {{ background: var(--accent); border-color: var(--accent); color: #fff; }}
-      .ep-summary-btn:hover .ep-meta strong {{ color: var(--accent); }}
-      .hl-btn:hover {{ color: var(--accent); }}
-      .ep-setlist-btn:hover {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
-      .search-clear:hover {{ color: var(--ink); }}
-    }}
 
     .search-hits {{ margin-top: 10px; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }}
     .hit-btn {{
@@ -680,7 +714,16 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       gap: 10px;
       width: 100%;
     }}
-    .hit-btn:hover {{ background: rgba(11, 93, 99, 0.14); }}
+    .ep-more-hits {{
+      background: none;
+      border: none;
+      padding: 6px 2px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      text-align: left;
+    }}
 
     .drawer-backdrop {{
       display: none;
@@ -688,6 +731,8 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       inset: 0;
       background: rgba(20, 20, 19, 0.24);
       z-index: 60;
+      touch-action: none;
+      overscroll-behavior: contain;
     }}
     .drawer-backdrop.open {{ display: block; }}
     .drawer {{
@@ -705,6 +750,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       transition: transform 0.2s ease, visibility 0s linear 0.2s;
       display: flex;
       flex-direction: column;
+      overscroll-behavior: contain;
     }}
     .drawer.open {{
       transform: translateX(0);
@@ -719,20 +765,24 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       justify-content: space-between;
       align-items: flex-start;
       gap: 12px;
+      touch-action: none;
     }}
     .drawer-title {{ margin: 0 0 4px; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }}
     .drawer-sub {{ font-size: 0.82rem; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
     .drawer-close {{
       background: none;
       border: 1px solid var(--line);
-      padding: 4px 10px;
+      min-width: 44px;
+      min-height: 40px;
+      padding: 8px 12px;
       cursor: pointer;
       font-size: 0.85rem;
       color: var(--ink);
+      flex-shrink: 0;
     }}
-    .drawer-close:hover {{ border-color: var(--ink); }}
     .drawer-body {{
       overflow-y: auto;
+      overscroll-behavior: contain;
       padding: 18px 22px calc(124px + env(safe-area-inset-bottom, 0px));
       flex: 1;
     }}
@@ -756,7 +806,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       color: var(--muted);
       user-select: none;
     }}
-    .drawer-files summary:hover {{ color: var(--ink); }}
     .drawer-meta-links {{
       margin-top: 10px;
       display: flex;
@@ -766,7 +815,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       color: var(--muted);
     }}
     .drawer-meta-links a {{ color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }}
-    .drawer-meta-links a:hover {{ color: var(--accent); }}
     .drawer-section-label {{
       font-size: 0.72rem;
       font-weight: 700;
@@ -805,7 +853,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       font-size: 0.86rem;
       color: var(--ink);
     }}
-    .ch-item:hover {{ background: var(--accent-soft); }}
     .ch-item.is-playing {{ background: var(--accent-soft); font-weight: 600; }}
     .ch-ts {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.78rem; color: var(--muted); flex-shrink: 0; }}
     .ch-music .ch-ts, .ch-music .ch-label {{ color: var(--accent); }}
@@ -816,7 +863,6 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     .hl-card button {{
       background: none; border: none; padding: 0; text-align: left; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: var(--ink);
     }}
-    .hl-card button:hover {{ color: var(--accent); }}
     .hl-card p {{ margin: 4px 0 0; font-size: 0.83rem; color: var(--muted); }}
 
     footer {{
@@ -859,7 +905,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
-      height: 28px;
+      height: 34px;
       margin: 0;
       padding: 0;
       background: transparent;
@@ -911,35 +957,134 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       align-items: center;
       gap: 12px;
     }}
+    .p-main {{ display: contents; }}
     .p-play {{
-      width: 34px; height: 34px; padding: 0; border-radius: 50%;
+      width: 36px; height: 36px; padding: 0; border-radius: 50%;
       background: #F6F3EC; color: #141413; border: none; cursor: pointer; flex-shrink: 0;
       display: inline-flex; align-items: center; justify-content: center;
     }}
-    .p-meta {{ flex: 1; min-width: 0; cursor: pointer; }}
-    .p-ep {{ font-size: 0.72rem; color: #A6A298; }}
+    .p-meta {{
+      flex: 1;
+      min-width: 0;
+      background: none;
+      border: none;
+      padding: 2px 0;
+      margin: 0;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }}
+    .p-meta:focus-visible, .p-play:focus-visible, .p-btn:focus-visible, .p-close:focus-visible {{
+      outline: 2px solid #F6F3EC;
+      outline-offset: 2px;
+    }}
+    .p-ep-row {{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }}
+    .p-ep {{ font-size: 0.72rem; color: #A6A298; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .p-time-inline {{
+      display: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.72rem;
+      color: #D8D3C7;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }}
+    .p-title-row {{
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 0;
+    }}
     .p-title {{ font-size: 0.86rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .p-chev {{ color: #A6A298; font-size: 0.9rem; flex-shrink: 0; }}
     .p-controls {{ display: flex; gap: 4px; flex-wrap: nowrap; }}
     .p-btn, .p-close {{
       background: none; border: 1px solid #353430; color: #F6F3EC;
-      padding: 4px 7px; font-size: 0.75rem; cursor: pointer;
+      padding: 5px 8px; font-size: 0.75rem; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
     }}
-    .p-btn:hover, .p-close:hover {{ border-color: #F6F3EC; }}
+    .p-close {{ order: 5; flex-shrink: 0; }}
     .p-time {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; color: #A6A298; white-space: nowrap; }}
 
+    @media (hover: hover) {{
+      a:hover {{ text-decoration: underline; }}
+      .btn-primary:hover {{ background: var(--accent-hover); }}
+      .btn-text:hover {{ color: var(--accent); border-bottom-color: var(--accent); }}
+      .sub-copy:hover {{ background: var(--accent); }}
+      .sub-apps a:hover {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
+      .s-tab:hover {{ color: var(--ink); }}
+      .quick-picks button:hover {{ color: var(--accent); text-decoration-color: var(--accent); }}
+      .resume-btn:hover strong {{ text-decoration: underline; }}
+      .resume-dismiss:hover {{ color: var(--ink); }}
+      .ep-play:hover {{ background: var(--accent); border-color: var(--accent); color: #fff; }}
+      .ep-summary-btn:hover .ep-meta strong {{ color: var(--accent); }}
+      .hl-btn:hover {{ color: var(--accent); }}
+      .ep-setlist-btn:hover {{ border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }}
+      .search-clear:hover {{ color: var(--ink); }}
+      .hit-btn:hover {{ background: rgba(11, 93, 99, 0.14); }}
+      .ep-more-hits:hover {{ text-decoration: underline; }}
+      .drawer-close:hover {{ border-color: var(--ink); }}
+      .drawer-files summary:hover {{ color: var(--ink); }}
+      .drawer-meta-links a:hover {{ color: var(--accent); }}
+      .ch-item:hover {{ background: var(--accent-soft); }}
+      .hl-card button:hover {{ color: var(--accent); }}
+      .p-btn:hover, .p-close:hover {{ border-color: #F6F3EC; }}
+      .p-meta:hover .p-title {{ text-decoration: underline; }}
+    }}
+
     @media (max-width: 640px) {{
+      body {{ padding-bottom: calc(174px + env(safe-area-inset-bottom, 0px)); }}
       .wrap {{ padding: 18px 16px 88px; }}
       .masthead {{ gap: 16px; align-items: flex-start; }}
       .cover {{ width: 84px; height: 84px; }}
       .sub-wrap {{ position: static; }}
       .sub-pop {{ left: 0; right: 0; width: auto; top: calc(100% - 16px); }}
       .search-field {{ flex: 1 1 100%; min-width: 0; }}
-      .ep-row {{ grid-template-columns: 34px 1fr; }}
-      .ep-setlist-btn {{ grid-column: 2; justify-self: start; margin-top: 8px; }}
+      .s-tab {{ min-height: 40px; padding: 8px 10px; }}
+      .ep-row {{ grid-template-columns: 42px 1fr; gap: 4px 12px; }}
+      .ep-play {{ width: 42px; height: 42px; }}
+      .hl-btn {{ padding: 6px 0; }}
+      .ep-setlist-btn {{ grid-column: 2; justify-self: start; margin-top: 8px; min-height: 40px; padding: 8px 14px; }}
       .drawer {{ border-left: none; }}
-      .p-progress-wrap {{ padding: 4px 12px 0; }}
-      .player-inner {{ padding: 2px 12px 10px; gap: 8px; }}
-      .p-time, #pSpeedBtn, #pReroll {{ display: none; }}
+      .drawer-body {{ padding: 18px 18px calc(174px + env(safe-area-inset-bottom, 0px)); }}
+      .filter-inline {{ gap: 4px; }}
+      .filter-inline button {{ min-height: 40px; padding: 6px 10px; }}
+      .p-progress-wrap {{ padding: 2px 12px 0; }}
+      .p-progress {{ height: 36px; }}
+      .player-inner {{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding: 2px 12px 10px;
+      }}
+      .p-main {{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }}
+      .p-play {{ width: 42px; height: 42px; }}
+      .p-close {{ order: 0; min-width: 44px; min-height: 44px; padding: 0; font-size: 0.9rem; }}
+      .p-time-inline {{ display: inline; }}
+      .p-time, #pReroll {{ display: none; }}
+      .p-controls {{
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 6px;
+      }}
+      .p-btn {{
+        min-height: 42px;
+        min-width: 0;
+        padding: 0 2px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+        overflow: hidden;
+      }}
     }}
   </style>
 </head>
@@ -975,14 +1120,14 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     <div class="toolbar">
       <div class="toolbar-row">
         <div class="search-field">
-          <input class="search-input" id="searchInput" type="search" placeholder="Hae biisiä, bändiä, paikkaa tai tarinaa..." autocomplete="off" autocorrect="off" spellcheck="false" />
+          <input class="search-input" id="searchInput" type="search" aria-label="Hae biisiä, bändiä, paikkaa tai tarinaa" placeholder="Hae biisiä, bändiä, paikkaa tai tarinaa..." autocomplete="off" autocorrect="off" spellcheck="false" />
           <button class="search-clear" id="searchClear" type="button" aria-label="Tyhjennä haku" hidden>✕</button>
         </div>
-        <div class="season-tabs" role="tablist">
-          <button class="s-tab active" data-season="all" type="button">Kaikki</button>
-          <button class="s-tab" data-season="1" type="button">Kausi 1</button>
-          <button class="s-tab" data-season="2" type="button">Kausi 2</button>
-          <button class="s-tab" data-season="3" type="button">Kausi 3</button>
+        <div class="season-tabs" role="tablist" aria-label="Suodata kauden mukaan">
+          <button class="s-tab active" data-season="all" type="button" role="tab" aria-selected="true">Kaikki</button>
+          <button class="s-tab" data-season="1" type="button" role="tab" aria-selected="false">Kausi 1</button>
+          <button class="s-tab" data-season="2" type="button" role="tab" aria-selected="false">Kausi 2</button>
+          <button class="s-tab" data-season="3" type="button" role="tab" aria-selected="false">Kausi 3</button>
         </div>
       </div>
       <div class="quick-picks" id="quickPicks">
@@ -995,6 +1140,11 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       </div>
     </div>
 
+    <div class="resume-bar" id="resumeBar" hidden>
+      <button class="resume-btn" id="resumeBtn" type="button"></button>
+      <button class="resume-dismiss" id="resumeDismiss" type="button" aria-label="Piilota jatkamispalkki">✕</button>
+    </div>
+
     <main id="episodeList"></main>
 
     <footer>
@@ -1004,7 +1154,7 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
   </div>
 
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
-  <aside class="drawer" id="drawer" aria-label="Jakson sisältö">
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
     <div class="drawer-head">
       <div>
         <h2 class="drawer-title" id="drawerTitle"></h2>
@@ -1021,21 +1171,30 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       <input class="p-progress" id="pProgress" type="range" min="0" max="1000" value="0" aria-label="Toistokohta" />
     </div>
     <div class="player-inner">
-      <button class="p-play" id="pPlayBtn" type="button" aria-label="Toista tai tauota"><svg class="icon-play" width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><path d="M1 1l9 5-9 5z"/></svg></button>
-      <div class="p-meta" id="pMeta" title="Avaa soivan jakson biisit ja aiheet">
-        <div class="p-ep" id="pEp"></div>
-        <div class="p-title" id="pTitle"></div>
+      <div class="p-main">
+        <button class="p-play" id="pPlayBtn" type="button" aria-label="Toista tai tauota"><svg class="icon-play" width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><path d="M1 1l9 5-9 5z"/></svg></button>
+        <button class="p-meta" id="pMeta" type="button" title="Avaa soivan jakson biisit ja aiheet">
+          <span class="p-ep-row">
+            <span class="p-ep" id="pEp"></span>
+            <span class="p-time-inline" id="pTimeInline" aria-live="off"></span>
+          </span>
+          <span class="p-title-row">
+            <span class="p-title" id="pTitle"></span>
+            <span class="p-chev" aria-hidden="true">›</span>
+          </span>
+        </button>
+        <button class="p-close" id="pCloseBtn" type="button" aria-label="Sulje soitin">✕</button>
       </div>
       <div class="p-controls">
-        <button class="p-btn" id="pPrevBtn" type="button" title="Edellinen luku">⏮</button>
-        <button class="p-btn" id="pBack15" type="button" title="-15s">-15s</button>
-        <button class="p-btn" id="pFwd30" type="button" title="+30s">+30s</button>
-        <button class="p-btn" id="pNextBtn" type="button" title="Seuraava luku">⏭</button>
-        <button class="p-btn" id="pSpeedBtn" type="button" title="Toistonopeus">1×</button>
+        <button class="p-btn" id="pPrevBtn" type="button" title="Edellinen luku" aria-label="Edellinen luku">⏮</button>
+        <button class="p-btn" id="pBack15" type="button" title="-15s" aria-label="15 sekuntia taaksepäin">-15s</button>
+        <button class="p-btn" id="pFwd30" type="button" title="+30s" aria-label="30 sekuntia eteenpäin">+30s</button>
+        <button class="p-btn" id="pNextBtn" type="button" title="Seuraava luku" aria-label="Seuraava luku">⏭</button>
+        <button class="p-btn" id="pSpeedBtn" type="button" title="Toistonopeus" aria-label="Toistonopeus">1×</button>
+        <button class="p-btn" id="pShareBtn" type="button" title="Kopioi linkki tähän kohtaan" aria-label="Kopioi linkki tähän kohtaan">Jaa</button>
         <button class="p-btn" id="pReroll" type="button" title="Arvo toinen tarina">↻ Arvo</button>
       </div>
       <div class="p-time" id="pTime">00:00:00</div>
-      <button class="p-close" id="pCloseBtn" type="button" aria-label="Sulje soitin">✕</button>
     </div>
   </div>
 
@@ -1054,8 +1213,12 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     const searchInput = document.getElementById('searchInput');
     const searchClear = document.getElementById('searchClear');
     const quickPicks = document.getElementById('quickPicks');
+    const resumeBar = document.getElementById('resumeBar');
+    const resumeBtn = document.getElementById('resumeBtn');
+    const resumeDismiss = document.getElementById('resumeDismiss');
     const drawer = document.getElementById('drawer');
     const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const drawerCloseBtn = document.getElementById('drawerClose');
     const drawerTitle = document.getElementById('drawerTitle');
     const drawerSub = document.getElementById('drawerSub');
     const drawerBody = document.getElementById('drawerBody');
@@ -1065,20 +1228,158 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     const pEp = document.getElementById('pEp');
     const pTitle = document.getElementById('pTitle');
     const pTime = document.getElementById('pTime');
+    const pTimeInline = document.getElementById('pTimeInline');
     const pPlayBtn = document.getElementById('pPlayBtn');
     const pProgress = document.getElementById('pProgress');
     const pSpeedBtn = document.getElementById('pSpeedBtn');
+    const pShareBtn = document.getElementById('pShareBtn');
     const SPEEDS = [1, 1.25, 1.5];
+    const STORAGE_KEY = 'rt_archive_player_v1';
     let speedIdx = 0;
     let activeEp = null;
     let activeChapterIdx = -1;
     let pendingSeekSec = null;
+    let pendingAutoplay = true;
+    let suppressNextSeekSave = false;
     let isScrubbing = false;
+    let scrubValue = null;
+    let scrubEndTimer = null;
+    let lastSaveMs = 0;
+    let lastDrawerTrigger = null;
+    let lastAppliedHash = '';
+
+    function parseDurationSec(str) {{
+      const parts = String(str || '').split(':').map(Number);
+      if (parts.length === 3 && parts.every(Number.isFinite)) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+      if (parts.length === 2 && parts.every(Number.isFinite)) return parts[0] * 60 + parts[1];
+      return 0;
+    }}
+
+    function getActiveDuration() {{
+      if (audioEl.duration && isFinite(audioEl.duration) && audioEl.duration > 0) return audioEl.duration;
+      return activeEp ? parseDurationSec(activeEp.duration) : 0;
+    }}
+
+    function getActiveTimeSec() {{
+      if (pendingSeekSec !== null) return pendingSeekSec;
+      return Math.max(0, audioEl.currentTime || 0);
+    }}
+
+    function setTimeDisplay(text) {{
+      pTime.textContent = text;
+      pTimeInline.textContent = text;
+      pProgress.setAttribute('aria-valuetext', text);
+    }}
 
     function setProgressVisual(val) {{
       const clamped = Math.max(0, Math.min(1000, Math.round(Number(val) || 0)));
       pProgress.value = clamped;
       pProgress.style.setProperty('--pct', `${{(clamped / 10).toFixed(1)}}%`);
+    }}
+
+    function readSavedState() {{
+      try {{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (!data || typeof data !== 'object') return null;
+        const epId = Number(data.epId);
+        const ep = EPISODES.find(e => e.id === epId);
+        if (!ep) return null;
+        const maxDur = parseDurationSec(ep.duration) || 86400;
+        const t = Number(data.t);
+        const clampedT = Number.isFinite(t) ? Math.max(0, Math.min(maxDur, Math.floor(t))) : 0;
+        const sIdx = Number.isInteger(data.speedIdx) && data.speedIdx >= 0 && data.speedIdx < SPEEDS.length ? data.speedIdx : 0;
+        return {{ epId: ep.id, t: clampedT, speedIdx: sIdx }};
+      }} catch (e) {{
+        return null;
+      }}
+    }}
+
+    function savePlayerState(force = false) {{
+      if (!activeEp) return;
+      const cur = Math.floor(getActiveTimeSec());
+      const dur = getActiveDuration();
+      if (audioEl.ended || (dur > 0 && dur - cur < 15)) {{
+        clearSavedState();
+        return;
+      }}
+      const now = Date.now();
+      if (!force && now - lastSaveMs < 3000) return;
+      lastSaveMs = now;
+      try {{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({{
+          epId: activeEp.id,
+          t: cur,
+          speedIdx,
+          updatedAt: now
+        }}));
+      }} catch (e) {{}}
+    }}
+
+    function clearSavedState() {{
+      try {{ localStorage.removeItem(STORAGE_KEY); }} catch (e) {{}}
+    }}
+
+    function renderResumeBar(saved) {{
+      if (!saved || saved.t < 5) {{
+        resumeBar.hidden = true;
+        return;
+      }}
+      const ep = EPISODES.find(e => e.id === saved.epId);
+      if (!ep) {{
+        resumeBar.hidden = true;
+        return;
+      }}
+      const epDur = parseDurationSec(ep.duration);
+      if (epDur > 0 && epDur - saved.t < 15) {{
+        resumeBar.hidden = true;
+        return;
+      }}
+      resumeBtn.innerHTML = `<span>▶ Jatka: <strong>${{esc(ep.label)}}</strong></span><span class="resume-ts">${{fmtTime(saved.t)}} / ${{esc(ep.duration)}}</span>`;
+      resumeBtn.dataset.resumeEp = String(ep.id);
+      resumeBtn.dataset.resumeSec = String(saved.t);
+      resumeBar.hidden = false;
+    }}
+
+    function buildShareUrl(ep, sec) {{
+      const base = location.href.split('#')[0];
+      const t = Math.max(0, Math.floor(Number(sec) || 0));
+      return t > 0 ? `${{base}}#ep-${{ep.key}}&t=${{t}}` : `${{base}}#ep-${{ep.key}}`;
+    }}
+
+    async function copyTextWithFeedback(text, btn, okLabel) {{
+      if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent;
+      let copied = false;
+      try {{
+        if (navigator.clipboard && navigator.clipboard.writeText) {{
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        }}
+      }} catch (e) {{}}
+      if (!copied) {{
+        try {{
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          copied = document.execCommand('copy');
+          document.body.removeChild(ta);
+        }} catch (e) {{}}
+      }}
+      if (copied) {{
+        btn.textContent = okLabel;
+        if (btn._fbTimer) clearTimeout(btn._fbTimer);
+        btn._fbTimer = setTimeout(() => {{
+          btn.textContent = btn.dataset.origLabel;
+          btn._fbTimer = null;
+        }}, 1800);
+      }} else {{
+        prompt('Kopioi osoite:', text);
+      }}
     }}
 
     function syncSearchClear() {{
@@ -1097,28 +1398,46 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       return `${{String(h).padStart(2,'0')}}:${{String(m).padStart(2,'0')}}:${{String(s).padStart(2,'0')}}`;
     }}
 
-    function playAt(epId, startSec, customLabel) {{
+    function playAt(epId, startSec, customLabel, opts = {{}}) {{
       const ep = EPISODES.find(e => e.id === epId);
       if (!ep) return;
-      const targetSec = Math.max(0, Number(startSec) || 0);
+      const shouldAutoplay = opts.autoplay !== false;
+      const epDur = parseDurationSec(ep.duration);
+      const rawTarget = Math.max(0, Number(startSec) || 0);
+      const targetSec = epDur > 0 ? Math.min(rawTarget, epDur) : rawTarget;
       const sameEp = activeEp && activeEp.id === ep.id && audioEl.src === ep.audio;
       activeEp = ep;
+      resumeBar.hidden = true;
       playerBar.classList.add('visible');
-      pTime.textContent = `${{fmtTime(targetSec)}} / ${{ep.duration}} · ladataan…`;
+      setTimeDisplay(shouldAutoplay ? `${{fmtTime(targetSec)}} / ${{ep.duration}} · ladataan…` : `${{fmtTime(targetSec)}} / ${{ep.duration}}`);
       updatePlayerChapter(targetSec, customLabel);
+      if (epDur > 0) setProgressVisual((targetSec / epDur) * 1000);
+      else setProgressVisual(0);
 
       if (sameEp && audioEl.readyState >= 1) {{
+        pendingSeekSec = null;
+        pendingAutoplay = shouldAutoplay;
+        suppressNextSeekSave = !shouldAutoplay;
         try {{ audioEl.currentTime = targetSec; }} catch(e) {{}}
         if (audioEl.duration > 0) setProgressVisual((targetSec / audioEl.duration) * 1000);
         audioEl.playbackRate = SPEEDS[speedIdx];
-        audioEl.play().catch(() => {{}});
+        if (shouldAutoplay) audioEl.play().catch(() => {{}});
+        else {{
+          audioEl.pause();
+          pPlayBtn.innerHTML = ICON_PLAY;
+        }}
       }} else {{
-        setProgressVisual(0);
         pendingSeekSec = targetSec;
+        pendingAutoplay = shouldAutoplay;
         audioEl.src = ep.audio;
-        audioEl.load();
-        audioEl.play().catch(() => {{}});
+        if (shouldAutoplay) {{
+          audioEl.load();
+          audioEl.play().catch(() => {{}});
+        }} else {{
+          pPlayBtn.innerHTML = ICON_PLAY;
+        }}
       }}
+      if (shouldAutoplay) savePlayerState(true);
 
       if ('mediaSession' in navigator) {{
         try {{
@@ -1170,7 +1489,18 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
 
     function skipSeconds(delta) {{
       if (!activeEp) return;
-      audioEl.currentTime = Math.max(0, (audioEl.currentTime || 0) + delta);
+      const dur = getActiveDuration();
+      const base = getActiveTimeSec();
+      const target = Math.max(0, dur > 0 ? Math.min(dur, base + delta) : base + delta);
+      if (audioEl.readyState >= 1) {{
+        audioEl.currentTime = target;
+      }} else {{
+        pendingSeekSec = target;
+      }}
+      if (dur > 0) setProgressVisual((target / dur) * 1000);
+      setTimeDisplay(`${{fmtTime(target)}} / ${{activeEp.duration}}`);
+      updatePlayerChapter(target);
+      savePlayerState(true);
     }}
 
     function playRandomStory() {{
@@ -1182,25 +1512,54 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     audioEl.addEventListener('loadedmetadata', () => {{
       if (pendingSeekSec !== null) {{
         const s = pendingSeekSec;
+        const doPlay = pendingAutoplay && playerBar.classList.contains('visible');
         pendingSeekSec = null;
+        pendingAutoplay = false;
+        suppressNextSeekSave = !doPlay;
         try {{ audioEl.currentTime = s; }} catch(e) {{}}
         if (audioEl.duration > 0) setProgressVisual((s / audioEl.duration) * 1000);
         audioEl.playbackRate = SPEEDS[speedIdx];
-        audioEl.play().catch(() => {{}});
+        if (doPlay) audioEl.play().catch(() => {{}});
+        else if (activeEp) setTimeDisplay(`${{fmtTime(s)}} / ${{activeEp.duration}}`);
       }}
     }});
+    audioEl.addEventListener('error', () => {{
+      pendingAutoplay = false;
+      pPlayBtn.innerHTML = ICON_PLAY;
+      if (activeEp) setTimeDisplay('Äänen lataus epäonnistui');
+    }});
     audioEl.addEventListener('waiting', () => {{
-      if (activeEp) pTime.textContent = `${{fmtTime(audioEl.currentTime)}} / ${{activeEp.duration}} · puskuroi…`;
+      if (activeEp && !isScrubbing) setTimeDisplay(`${{fmtTime(getActiveTimeSec())}} / ${{activeEp.duration}} · puskuroi…`);
     }});
     const ICON_PLAY = '<svg class="icon-play" width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><path d="M1 1l9 5-9 5z"/></svg>';
     const ICON_PAUSE = '<svg width="10" height="12" viewBox="0 0 10 12" aria-hidden="true"><rect x="1" y="1" width="3" height="10"/><rect x="6" y="1" width="3" height="10"/></svg>';
-    audioEl.addEventListener('play', () => {{ pPlayBtn.innerHTML = ICON_PAUSE; }});
-    audioEl.addEventListener('pause', () => {{ pPlayBtn.innerHTML = ICON_PLAY; }});
+    audioEl.addEventListener('play', () => {{
+      pPlayBtn.innerHTML = ICON_PAUSE;
+      savePlayerState(true);
+    }});
+    audioEl.addEventListener('pause', () => {{
+      pPlayBtn.innerHTML = ICON_PLAY;
+      if (audioEl.currentTime > 0 && !suppressNextSeekSave) savePlayerState(true);
+    }});
+    audioEl.addEventListener('ended', () => {{
+      pPlayBtn.innerHTML = ICON_PLAY;
+      clearSavedState();
+    }});
+    audioEl.addEventListener('seeked', () => {{
+      if (suppressNextSeekSave) {{
+        suppressNextSeekSave = false;
+        return;
+      }}
+      if (audioEl.currentTime > 0 || !audioEl.paused) savePlayerState(true);
+    }});
     audioEl.addEventListener('timeupdate', () => {{
+      if (pendingSeekSec !== null) return;
       const cur = audioEl.currentTime || 0;
-      const dur = audioEl.duration || 0;
-      pTime.textContent = `${{fmtTime(cur)}} / ${{activeEp ? activeEp.duration : fmtTime(dur)}}`;
-      if (dur > 0 && !isScrubbing) setProgressVisual((cur / dur) * 1000);
+      const dur = getActiveDuration();
+      if (!isScrubbing) {{
+        setTimeDisplay(`${{fmtTime(cur)}} / ${{activeEp ? activeEp.duration : fmtTime(dur)}}`);
+        if (dur > 0) setProgressVisual((cur / dur) * 1000);
+      }}
       if (activeEp) {{
         const nonAds = activeEp.chapters.filter(c => c.kind !== 'ad');
         let idx = 0;
@@ -1212,27 +1571,79 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
           if (nonAds[idx]) pTitle.textContent = nonAds[idx].title;
           highlightPlayingRow();
         }}
+        if (dur > 0 && dur - cur < 15) clearSavedState();
+        else savePlayerState(false);
       }}
     }});
 
     pPlayBtn.addEventListener('click', () => {{
-      if (audioEl.paused) audioEl.play().catch(() => {{}});
-      else audioEl.pause();
+      if (!activeEp) return;
+      if (audioEl.paused) {{
+        pendingAutoplay = true;
+        if (audioEl.readyState === 0) {{
+          setTimeDisplay(`${{fmtTime(getActiveTimeSec())}} / ${{activeEp.duration}} · ladataan…`);
+          audioEl.load();
+        }}
+        audioEl.playbackRate = SPEEDS[speedIdx];
+        audioEl.play().catch(() => {{}});
+      }} else {{
+        pendingAutoplay = false;
+        audioEl.pause();
+      }}
     }});
-    const startScrub = () => {{ isScrubbing = true; }};
-    const endScrub = () => {{ isScrubbing = false; }};
+    const startScrub = () => {{
+      if (scrubEndTimer) {{ clearTimeout(scrubEndTimer); scrubEndTimer = null; }}
+      isScrubbing = true;
+    }};
+    const endScrub = () => {{
+      if (!isScrubbing) return;
+      if (scrubEndTimer) clearTimeout(scrubEndTimer);
+      scrubEndTimer = setTimeout(() => {{
+        isScrubbing = false;
+        scrubValue = null;
+        scrubEndTimer = null;
+      }}, 150);
+    }};
     pProgress.addEventListener('pointerdown', startScrub);
     pProgress.addEventListener('touchstart', startScrub, {{ passive: true }});
     pProgress.addEventListener('mousedown', startScrub);
-    pProgress.addEventListener('pointerup', endScrub);
-    pProgress.addEventListener('pointercancel', endScrub);
-    pProgress.addEventListener('touchend', endScrub);
-    pProgress.addEventListener('mouseup', endScrub);
-    pProgress.addEventListener('change', endScrub);
+    pProgress.addEventListener('blur', endScrub);
+    window.addEventListener('pointerup', endScrub);
+    window.addEventListener('pointercancel', endScrub);
+    window.addEventListener('touchend', endScrub);
+    window.addEventListener('mouseup', endScrub);
+    window.addEventListener('blur', endScrub);
     pProgress.addEventListener('input', () => {{
+      if (scrubEndTimer) {{ clearTimeout(scrubEndTimer); scrubEndTimer = null; }}
+      isScrubbing = true;
       const val = Number(pProgress.value) || 0;
+      scrubValue = val;
       pProgress.style.setProperty('--pct', `${{(val / 10).toFixed(1)}}%`);
-      if (audioEl.duration) audioEl.currentTime = (val / 1000) * audioEl.duration;
+      const dur = getActiveDuration();
+      if (dur > 0) {{
+        const previewSec = (val / 1000) * dur;
+        setTimeDisplay(`${{fmtTime(previewSec)}} / ${{activeEp ? activeEp.duration : fmtTime(dur)}}`);
+      }}
+    }});
+    pProgress.addEventListener('change', () => {{
+      if (scrubEndTimer) {{ clearTimeout(scrubEndTimer); scrubEndTimer = null; }}
+      const val = scrubValue !== null ? scrubValue : (Number(pProgress.value) || 0);
+      scrubValue = null;
+      isScrubbing = false;
+      pProgress.value = val;
+      pProgress.style.setProperty('--pct', `${{(val / 10).toFixed(1)}}%`);
+      const dur = getActiveDuration();
+      if (dur > 0) {{
+        const targetSec = (val / 1000) * dur;
+        if (audioEl.readyState >= 1 && audioEl.duration > 0) {{
+          try {{ audioEl.currentTime = targetSec; }} catch (e) {{}}
+        }} else {{
+          pendingSeekSec = targetSec;
+        }}
+        setTimeDisplay(`${{fmtTime(targetSec)}} / ${{activeEp ? activeEp.duration : fmtTime(dur)}}`);
+        updatePlayerChapter(targetSec);
+        savePlayerState(true);
+      }}
     }});
     document.getElementById('pPrevBtn').addEventListener('click', () => jumpChapter(-1));
     document.getElementById('pNextBtn').addEventListener('click', () => jumpChapter(1));
@@ -1242,14 +1653,36 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       speedIdx = (speedIdx + 1) % SPEEDS.length;
       audioEl.playbackRate = SPEEDS[speedIdx];
       pSpeedBtn.textContent = `${{SPEEDS[speedIdx]}}×`;
+      savePlayerState(true);
+    }});
+    pShareBtn.addEventListener('click', () => {{
+      if (!activeEp) return;
+      copyTextWithFeedback(buildShareUrl(activeEp, getActiveTimeSec()), pShareBtn, 'OK ✓');
     }});
     document.getElementById('pReroll').addEventListener('click', playRandomStory);
     document.getElementById('pMeta').addEventListener('click', () => {{
       if (activeEp) openDrawer(activeEp.id);
     }});
     document.getElementById('pCloseBtn').addEventListener('click', () => {{
+      pendingAutoplay = false;
+      if (!audioEl.paused || audioEl.currentTime > 0) savePlayerState(true);
       audioEl.pause();
       playerBar.classList.remove('visible');
+    }});
+    window.addEventListener('pagehide', () => {{
+      if (!audioEl.paused || audioEl.currentTime > 0) savePlayerState(true);
+    }});
+    document.addEventListener('visibilitychange', () => {{
+      if (document.visibilityState === 'hidden' && (!audioEl.paused || audioEl.currentTime > 0)) savePlayerState(true);
+    }});
+    resumeBtn.addEventListener('click', () => {{
+      const epId = Number(resumeBtn.dataset.resumeEp);
+      const sec = Number(resumeBtn.dataset.resumeSec || 0);
+      if (epId) playAt(epId, sec);
+    }});
+    resumeDismiss.addEventListener('click', () => {{
+      resumeBar.hidden = true;
+      clearSavedState();
     }});
 
     const subBtn = document.getElementById('subBtn');
@@ -1266,14 +1699,8 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         subBtn.setAttribute('aria-expanded', 'false');
       }}
     }});
-    copyRssBtn.addEventListener('click', async () => {{
-      try {{
-        await navigator.clipboard.writeText(SUBSCRIBE.rss);
-        copyRssBtn.textContent = 'RSS-osoite kopioitu!';
-        setTimeout(() => copyRssBtn.textContent = 'Kopioi RSS-osoite', 1800);
-      }} catch {{
-        prompt('Kopioi RSS-osoite:', SUBSCRIBE.rss);
-      }}
+    copyRssBtn.addEventListener('click', () => {{
+      copyTextWithFeedback(SUBSCRIBE.rss, copyRssBtn, 'RSS-osoite kopioitu!');
     }});
 
     function renderList() {{
@@ -1312,12 +1739,15 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         out += `<h2 class="season-heading">${{esc(SEASON_LABELS[s])}}</h2>`;
         for (const {{ ep, hits }} of items) {{
           const top2 = ep.highlights.slice(0, 2);
+          const moreHitsHtml = hits.length > 5
+            ? `<li><button class="ep-more-hits" type="button" data-open-drawer="${{ep.id}}">+ ${{hits.length - 5}} muuta osumaa ›</button></li>`
+            : '';
           const hlHtml = q && hits.length
-            ? `<ul class="search-hits">${{hits.slice(0, 5).map(h => `<li><button class="hit-btn" type="button" data-play-ep="${{ep.id}}" data-play-sec="${{h.t}}"><span class="hl-ts">${{h.ts}}</span><span>${{esc(h.title)}}</span></button></li>`).join('')}}</ul>`
+            ? `<ul class="search-hits">${{hits.slice(0, 5).map(h => `<li><button class="hit-btn" type="button" data-play-ep="${{ep.id}}" data-play-sec="${{h.t}}"><span class="hl-ts">${{h.ts}}</span><span>${{esc(h.title)}}</span></button></li>`).join('')}}${{moreHitsHtml}}</ul>`
             : `<ul class="ep-highlights">${{top2.map(h => `<li><button class="hl-btn" type="button" data-play-ep="${{ep.id}}" data-play-sec="${{h.t}}"><span class="hl-ts">${{h.ts}}</span><span>${{esc(h.title)}}</span></button></li>`).join('')}}</ul>`;
           out += `
             <article class="ep-row">
-              <button class="ep-play" type="button" data-play-ep="${{ep.id}}" data-play-sec="0" title="Kuuntele jakso" aria-label="Kuuntele jakso">${{ICON_PLAY}}</button>
+              <button class="ep-play" type="button" data-play-ep="${{ep.id}}" data-play-sec="0" title="Kuuntele ${{esc(ep.label)}}" aria-label="Kuuntele ${{esc(ep.label)}}">${{ICON_PLAY}}</button>
               <div class="ep-content">
                 <button class="ep-summary-btn" type="button" data-open-drawer="${{ep.id}}">
                   <span class="ep-meta"><strong>${{esc(ep.label)}}</strong>${{esc(ep.date)}} · ${{esc(ep.duration)}}</span>
@@ -1331,21 +1761,34 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         }}
       }}
       listEl.innerHTML = out;
+      highlightPlayingRow();
     }}
 
     function openDrawer(epId, pushState = true) {{
       const ep = EPISODES.find(e => e.id === epId);
       if (!ep) return;
+      if (!drawer.classList.contains('open')) {{
+        lastDrawerTrigger = document.activeElement;
+      }}
+      if (openDrawerEpId !== ep.id) {{
+        drawerFilter = 'all';
+      }}
       openDrawerEpId = ep.id;
       drawerTitle.textContent = ep.label;
       drawerSub.textContent = `${{ep.date}} · ${{ep.duration}}`;
       renderDrawerBody(ep);
+      drawerBody.scrollTop = 0;
       drawer.classList.add('open');
       drawerBackdrop.classList.add('open');
+      document.documentElement.classList.add('drawer-open');
+      document.body.classList.add('drawer-open');
       document.querySelectorAll('.ep-setlist-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.openDrawer) === epId));
-      if (pushState && history.pushState) {{
-        history.pushState({{ epId }}, '', '#ep-' + ep.key);
+      const targetHash = '#ep-' + ep.key;
+      if (pushState && history.pushState && location.hash !== targetHash) {{
+        history.pushState({{ epId }}, '', targetHash);
       }}
+      lastAppliedHash = location.hash;
+      try {{ drawerCloseBtn.focus({{ preventScroll: true }}); }} catch (e) {{}}
     }}
 
     function renderDrawerBody(ep) {{
@@ -1363,11 +1806,12 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
           <span class="ch-label">${{c.kind === 'music' ? '♪ ' : ''}}${{esc(c.title.replace(/^(Intro ja )?Musiikki:\\s*/i, ''))}}</span>
         </button>
       `).join('');
-      const vttLink = ep.vttRel ? `<a href="${{ep.vttRel}}" target="_blank" rel="noopener">Tekstitys (.vtt)</a>` : '';
+      const vttLink = ep.vttRel ? `<a href="${{esc(ep.vttRel)}}" target="_blank" rel="noopener">Tekstitys (.vtt)</a>` : '';
       drawerBody.innerHTML = `
         <p class="drawer-desc">${{esc(ep.desc)}}</p>
         <div class="drawer-actions">
           <button class="btn-primary" type="button" data-play-ep="${{ep.id}}" data-play-sec="0">▶ Kuuntele alusta</button>
+          <button class="btn-text" type="button" data-share-ep="${{ep.id}}">Jaa linkki</button>
         </div>
         <div class="drawer-section-label">
           <span>Biisit &amp; aiheet (${{visibleChs.length}})</span>
@@ -1380,32 +1824,68 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
         <div>${{chsHtml}}</div>
         ${{ep.highlights.length ? `<div class="drawer-section-label"><span>Jakson parhaat nostot</span></div><div>${{hlsHtml}}</div>` : ''}}
         <details class="drawer-files">
-          <summary>Tiedostot ja tekninen lähdedata</summary>
+          <summary>Tiedostot ja lähdedata</summary>
           <div class="drawer-meta-links">
-            <a href="${{ep.audio}}" target="_blank" rel="noopener">Äänitiedosto (MP3)</a>
+            <a href="${{esc(ep.audio)}}" target="_blank" rel="noopener">Äänitiedosto (MP3)</a>
             ${{vttLink}}
-            <a href="${{ep.chaptersRel}}" target="_blank" rel="noopener">Luvut (raaka JSON-data)</a>
+            <a href="${{esc(ep.chaptersRel)}}" target="_blank" rel="noopener">Luvut (raaka JSON-data)</a>
           </div>
         </details>
       `;
       highlightPlayingRow();
     }}
 
-    function closeDrawer() {{
+    function closeDrawer(fromPopState = false) {{
+      if (!openDrawerEpId && !drawer.classList.contains('open')) return;
       openDrawerEpId = null;
+      lastAppliedHash = '';
       drawer.classList.remove('open');
       drawerBackdrop.classList.remove('open');
+      document.documentElement.classList.remove('drawer-open');
+      document.body.classList.remove('drawer-open');
       document.querySelectorAll('.ep-setlist-btn.active').forEach(b => b.classList.remove('active'));
+      if (!fromPopState && location.hash && location.hash.startsWith('#ep-') && history.replaceState) {{
+        history.replaceState(null, '', location.pathname + location.search);
+      }}
+      if (lastDrawerTrigger && document.contains(lastDrawerTrigger)) {{
+        try {{ lastDrawerTrigger.focus({{ preventScroll: true }}); }} catch (e) {{}}
+      }}
+      lastDrawerTrigger = null;
     }}
 
-    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
-    drawerBackdrop.addEventListener('click', closeDrawer);
-    window.addEventListener('popstate', () => {{ if (openDrawerEpId) closeDrawer(); }});
+    drawerCloseBtn.addEventListener('click', () => closeDrawer(false));
+    drawerBackdrop.addEventListener('click', () => closeDrawer(false));
+    window.addEventListener('popstate', () => {{
+      if (location.hash && location.hash.startsWith('#ep-')) {{
+        applyLocationHash();
+      }} else if (openDrawerEpId) {{
+        closeDrawer(true);
+      }}
+    }});
+    window.addEventListener('hashchange', () => applyLocationHash());
     document.addEventListener('keydown', (e) => {{
       if (e.key === 'Escape') {{
-        closeDrawer();
-        subPop.classList.remove('open');
-        subBtn.setAttribute('aria-expanded', 'false');
+        closeDrawer(false);
+        if (subPop.classList.contains('open')) {{
+          subPop.classList.remove('open');
+          subBtn.setAttribute('aria-expanded', 'false');
+          try {{ subBtn.focus({{ preventScroll: true }}); }} catch (err) {{}}
+        }}
+        return;
+      }}
+      if (e.key === 'Tab' && drawer.classList.contains('open')) {{
+        const focusables = Array.from(drawer.querySelectorAll('button, a[href], summary, input, [tabindex]:not([tabindex="-1"])')).filter(el => !el.disabled && el.offsetParent !== null);
+        if (focusables.length) {{
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (e.shiftKey && (document.activeElement === first || !drawer.contains(document.activeElement))) {{
+            e.preventDefault();
+            last.focus();
+          }} else if (!e.shiftKey && (document.activeElement === last || !drawer.contains(document.activeElement))) {{
+            e.preventDefault();
+            first.focus();
+          }}
+        }}
       }}
     }});
 
@@ -1413,6 +1893,15 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       const playEl = e.target.closest('[data-play-ep]');
       if (playEl) {{
         playAt(Number(playEl.dataset.playEp), Number(playEl.dataset.playSec || 0));
+        return;
+      }}
+      const shareEl = e.target.closest('[data-share-ep]');
+      if (shareEl) {{
+        const ep = EPISODES.find(x => x.id === Number(shareEl.dataset.shareEp));
+        if (ep) {{
+          const sec = activeEp && activeEp.id === ep.id ? getActiveTimeSec() : 0;
+          copyTextWithFeedback(buildShareUrl(ep, sec), shareEl, 'Linkki kopioitu!');
+        }}
         return;
       }}
       const drawerBtn = e.target.closest('[data-open-drawer]');
@@ -1424,7 +1913,11 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
       if (dFilter && openDrawerEpId) {{
         drawerFilter = dFilter.dataset.dfilter;
         const ep = EPISODES.find(x => x.id === openDrawerEpId);
-        if (ep) renderDrawerBody(ep);
+        if (ep) {{
+          renderDrawerBody(ep);
+          const nextBtn = drawerBody.querySelector(`[data-dfilter="${{drawerFilter}}"]`);
+          if (nextBtn) try {{ nextBtn.focus({{ preventScroll: true }}); }} catch (err) {{}}
+        }}
         return;
       }}
       const qBtn = e.target.closest('[data-q]');
@@ -1438,8 +1931,12 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
 
     document.querySelectorAll('.s-tab').forEach(btn => {{
       btn.addEventListener('click', () => {{
-        document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.s-tab').forEach(b => {{
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        }});
         btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
         currentSeason = btn.dataset.season;
         renderList();
       }});
@@ -1457,11 +1954,33 @@ def build_index_html(published: list[dict], total_episodes: int, has_cover: bool
     }});
     document.getElementById('randomBtn').addEventListener('click', playRandomStory);
 
+    function applyLocationHash() {{
+      const h = location.hash || '';
+      if (h === lastAppliedHash && openDrawerEpId) return true;
+      const m = h.match(/^#ep-(\\d{{2}})(?:&t=(\\d{{1,6}}))?$/);
+      if (!m) return false;
+      const targetId = parseInt(m[1], 10);
+      const ep = EPISODES.find(e => e.id === targetId);
+      if (!ep) return false;
+      lastAppliedHash = h;
+      openDrawer(targetId, false);
+      if (m[2] !== undefined) {{
+        const sec = parseInt(m[2], 10);
+        playAt(targetId, sec, undefined, {{ autoplay: false }});
+      }}
+      return true;
+    }}
+
+    const savedState = readSavedState();
+    if (savedState) {{
+      speedIdx = savedState.speedIdx;
+      pSpeedBtn.textContent = `${{SPEEDS[speedIdx]}}×`;
+    }}
     syncSearchClear();
     renderList();
-    if (location.hash && /^#ep-\\d{{2}}$/.test(location.hash)) {{
-      const targetId = parseInt(location.hash.slice(4), 10);
-      if (EPISODES.some(e => e.id === targetId)) openDrawer(targetId, false);
+    const openedFromHash = applyLocationHash();
+    if (!openedFromHash && savedState) {{
+      renderResumeBar(savedState);
     }}
   </script>
 </body>
